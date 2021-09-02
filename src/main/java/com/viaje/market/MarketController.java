@@ -1,13 +1,11 @@
 package com.viaje.market;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.viaje.market.base_dto.GlobalDto;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -18,7 +16,7 @@ import javax.validation.Valid;
 public class MarketController {
 
     @PostMapping("/buy/{exchangeCode}")
-    public GlobalDto<String> buy(@Valid @PathVariable Integer exchangeCode) {
+    public GlobalDto<String> buy(@Valid @PathVariable Integer exchangeCode, @RequestBody UjiData ujiData) {
         return new GlobalDto<>(
                 9000,
                 HttpStatus.CREATED.getReasonPhrase(),
@@ -27,7 +25,8 @@ public class MarketController {
     }
 
     @PostMapping("/sell/{exchangeCode}")
-    public GlobalDto<String> sell(@Valid @PathVariable Integer exchangeCode) {
+    public GlobalDto<String> sell(@Valid @PathVariable Integer exchangeCode, @RequestBody UjiData ujiData) {
+        log.error("--REQQUEST--" + ujiData);
         return new GlobalDto<>(
                 9000,
                 HttpStatus.CREATED.getReasonPhrase(),

@@ -10,4 +10,7 @@ import org.springframework.context.annotation.Configuration;
 public class ApiKeyConfiguration {
     private String principalRequestHeader;
     private String principalRequestValue;
+    private String signRequestHeader;
+    private String secretKey;
+
 }

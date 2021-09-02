@@ -6,3 +6,5 @@ appication:
     properties:
       principalRequestHeader: x-api-key
       principalRequestValue: 46sfy6etc12400cg1uxn58oexi0y0uffgn587y23ncganfqig9
+      signRequestHeader: Signature
+      secretKey: ux1hv8k3iyqcnp4d0ddm9jn2vpgdv4ptzwkeoykep67ig87rri

@@ -8,16 +8,23 @@ import org.springframework.security.core.authority.AuthorityUtils;
 public class ApiKeyAuthenticationToken extends AbstractAuthenticationToken {
 
     private String apiKey;
+    private String body;
+    private String signature;
 
-    public ApiKeyAuthenticationToken(String apiKey, boolean authenticated) {
+
+    public ApiKeyAuthenticationToken(String apiKey, String body, String signature, boolean authenticated) {
         super(AuthorityUtils.NO_AUTHORITIES);
         this.apiKey = apiKey;
+        this.body = body;
+        this.signature = signature;
         setAuthenticated(authenticated);
     }
 
-    public ApiKeyAuthenticationToken(String apiKey) {
+    public ApiKeyAuthenticationToken(String apiKey, String body, String signature) {
         super(AuthorityUtils.NO_AUTHORITIES);
         this.apiKey = apiKey;
+        this.body = body;
+        this.signature = signature;
         setAuthenticated(false);
     }
 
@@ -28,11 +35,16 @@ public class ApiKeyAuthenticationToken extends AbstractAuthenticationToken {
 
     @Override
     public Object getCredentials() {
-        return null;
+        return signature;
     }
 
     @Override
     public Object getPrincipal() {
         return apiKey;
+    }
+
+    @Override
+    public Object getDetails() {
+        return body;
     }
 }
