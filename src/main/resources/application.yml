@@ -1,0 +1,8 @@
+server:
+  port : 8081
+
+appication:
+  api-key:
+    properties:
+      principalRequestHeader: x-api-key
+      principalRequestValue: 46sfy6etc12400cg1uxn58oexi0y0uffgn587y23ncganfqig9
