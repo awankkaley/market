@@ -31,7 +31,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .addFilterBefore(new ApiKeyAuthenticationFilter(authenticationManager(), apiKeyConfiguration), UsernamePasswordAuthenticationFilter.class)
-//                .addFilterBefore(new SignatureFilter(authenticationManager(), signatureConfiguration), UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
 //                .antMatchers(
 //                        "/api/v1/**"

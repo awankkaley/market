@@ -32,12 +32,12 @@ public class ApiKeyAuthenticationFilter extends AbstractAuthenticationProcessing
     @Override
     public Authentication attemptAuthentication(
             HttpServletRequest request, HttpServletResponse response) throws IOException {
-        Object body = new ObjectMapper()
-                .readValue(request.getInputStream(), Object.class);
-        String bodyJson = new Gson().toJson(body);
+//        Object body = new ObjectMapper()
+//                .readValue(request.getInputStream(), Object.class);
+//        String bodyJson = new Gson().toJson(body);
         String apiKeyOptional = request.getHeader(apiKeyConfiguration.getPrincipalRequestHeader());
         String tokenHeader = request.getHeader(apiKeyConfiguration.getSignRequestHeader());
-        ApiKeyAuthenticationToken token = new ApiKeyAuthenticationToken(apiKeyOptional, bodyJson, tokenHeader);
+        ApiKeyAuthenticationToken token = new ApiKeyAuthenticationToken(apiKeyOptional, "bodyJson", tokenHeader);
         return getAuthenticationManager().authenticate(token);
     }
 

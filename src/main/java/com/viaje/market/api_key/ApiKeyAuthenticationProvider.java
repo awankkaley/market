@@ -1,6 +1,6 @@
 package com.viaje.market.api_key;
 
-import com.viaje.market.HmacValidator;
+import com.viaje.market.util.HmacValidator;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -34,11 +34,11 @@ public class ApiKeyAuthenticationProvider implements AuthenticationProvider {
             if (!apiKeyConfiguration.getPrincipalRequestValue().equals(apiKey)) {
                 throw new BadCredentialsException("API Key is invalid");
             }
-            if (HmacValidator.HashIsValid(apiKeyConfiguration.getSecretKey(), body, signature)) {
+//            if (HmacValidator.HashIsValid(apiKeyConfiguration.getSecretKey(), body, signature)) {
                 return new ApiKeyAuthenticationToken(apiKey, body, signature, true);
 
-            }
-            throw new BadCredentialsException("API Key is invalid");
+//            }
+//            throw new BadCredentialsException("API Key is invalid");
         }
     }
 
