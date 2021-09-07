@@ -1,10 +1,7 @@
 package com.viaje.market;
 
 import com.viaje.market.base_dto.GlobalDto;
-import com.viaje.market.dto.HotbitBalanceResultDto;
-import com.viaje.market.dto.HotbitBookResultDto;
-import com.viaje.market.dto.HotbitPeriodResultDto;
-import com.viaje.market.dto.HotbitTodayResultDto;
+import com.viaje.market.dto.*;
 import com.viaje.market.service.MarketService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -53,6 +50,15 @@ public class MarketController {
                 9000,
                 HttpStatus.OK.getReasonPhrase(),
                 marketService.getListOfTransaction(exchangeCode, side, offset, limit)
+        );
+    }
+
+    @PostMapping("/book/order/{exchangeCode}")
+    public GlobalDto<HotbitOrderResultDto> order(@Valid @PathVariable Integer exchangeCode, @RequestBody OrderRequestDto orderRequestDto) {
+        return new GlobalDto<>(
+                9000,
+                HttpStatus.OK.getReasonPhrase(),
+                marketService.postOrder(exchangeCode, orderRequestDto)
         );
     }
 }

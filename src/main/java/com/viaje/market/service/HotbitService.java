@@ -1,9 +1,6 @@
 package com.viaje.market.service;
 
-import com.viaje.market.dto.HotbitBalanceResultDto;
-import com.viaje.market.dto.HotbitBookResultDto;
-import com.viaje.market.dto.HotbitPeriodResultDto;
-import com.viaje.market.dto.HotbitTodayResultDto;
+import com.viaje.market.dto.*;
 
 public interface HotbitService {
     HotbitBalanceResultDto getBalance();
@@ -14,5 +11,6 @@ public interface HotbitService {
 
     HotbitBookResultDto getListOfTransaction(Integer side, Integer offset, String limit);
 
+    HotbitOrderResultDto postOrder(Integer side, Double amount, Double price, Integer isfee);
 
 }

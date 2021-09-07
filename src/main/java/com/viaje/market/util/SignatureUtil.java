@@ -2,6 +2,7 @@ package com.viaje.market.util;
 
 import com.viaje.market.config.HotbitConfiguration;
 import lombok.extern.slf4j.Slf4j;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -9,7 +10,7 @@ import java.security.NoSuchAlgorithmException;
 public class SignatureUtil {
 
     public static String GenerateSignature(String data, HotbitConfiguration hotbitConfiguration) {
-        String input = "api_key=" + hotbitConfiguration.getKey() + "&" + data + "&secret_key=" + hotbitConfiguration.getSecret();
+        String input = data + "&secret_key=" + hotbitConfiguration.getSecret();
         String result = null;
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
