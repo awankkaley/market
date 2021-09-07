@@ -1,6 +1,8 @@
 package com.viaje.market;
 
 import com.viaje.market.base_dto.GlobalDto;
+import com.viaje.market.dto.HotbitBalanceResultDto;
+import com.viaje.market.dto.HotbitBookResultDto;
 import com.viaje.market.dto.HotbitPeriodResultDto;
 import com.viaje.market.dto.HotbitTodayResultDto;
 import com.viaje.market.service.MarketService;
@@ -18,8 +20,8 @@ import javax.validation.Valid;
 public class MarketController {
     private final MarketService marketService;
 
-    @PostMapping("/balance/{exchangeCode}")
-    public GlobalDto<String> balance(@Valid @PathVariable Integer exchangeCode) {
+    @GetMapping("/balance/{exchangeCode}")
+    public GlobalDto<HotbitBalanceResultDto> balance(@Valid @PathVariable Integer exchangeCode) {
         return new GlobalDto<>(
                 9000,
                 HttpStatus.OK.getReasonPhrase(),
@@ -27,7 +29,7 @@ public class MarketController {
         );
     }
 
-    @PostMapping("/market/today/{exchangeCode}")
+    @GetMapping("/market/today/{exchangeCode}")
     public GlobalDto<HotbitTodayResultDto> marketToday(@Valid @PathVariable Integer exchangeCode) {
         return new GlobalDto<>(
                 9000,
@@ -36,12 +38,21 @@ public class MarketController {
         );
     }
 
-    @PostMapping("/market/period/{exchangeCode}/{period}")
-    public GlobalDto<HotbitPeriodResultDto> marketPeriod(@Valid @PathVariable Integer exchangeCode, @PathVariable Integer period) {
+    @GetMapping("/market/period/{exchangeCode}")
+    public GlobalDto<HotbitPeriodResultDto> marketPeriod(@Valid @PathVariable Integer exchangeCode, @RequestParam String period) {
         return new GlobalDto<>(
                 9000,
                 HttpStatus.OK.getReasonPhrase(),
-                marketService.getMarketStatusByPeriode(exchangeCode, period)
+                marketService.getMarketStatusByPeriode(exchangeCode, Integer.valueOf(period))
+        );
+    }
+
+    @GetMapping("/book/transaction/{exchangeCode}")
+    public GlobalDto<HotbitBookResultDto> transaction(@Valid @PathVariable Integer exchangeCode, @RequestParam String side, @RequestParam String offset, @RequestParam String limit) {
+        return new GlobalDto<>(
+                9000,
+                HttpStatus.OK.getReasonPhrase(),
+                marketService.getListOfTransaction(exchangeCode, side, offset, limit)
         );
     }
 }
