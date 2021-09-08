@@ -29,7 +29,7 @@ public class HotbitServiceImpl implements HotbitService {
     private RestTemplate restTemplate;
 
     @Override
-    public HotbitBalanceResultDto getBalance() {
+    public HotbitBalanceDto getBalance() {
         HotbitBalanceDto hotbitBalanceDto = null;
         try {
             String data = "api_key=" + hotbitConfiguration.getKey() + "&assets=[]";
@@ -52,11 +52,11 @@ public class HotbitServiceImpl implements HotbitService {
             throw new IllegalArgumentException("Failed to access Hotbit");
 
         }
-        return hotbitBalanceDto.getResult();
+        return hotbitBalanceDto;
     }
 
     @Override
-    public HotbitTodayResultDto getMarketStatusToday() {
+    public HotbitTodayDto getMarketStatusToday() {
         HotbitTodayDto hotbitTodayDto = null;
         try {
             HttpHeaders headers = new HttpHeaders();
@@ -79,11 +79,11 @@ public class HotbitServiceImpl implements HotbitService {
             log.error(exp.getMessage());
             throw new IllegalArgumentException("Failed to access Hotbit");
         }
-        return hotbitTodayDto.getResult();
+        return hotbitTodayDto;
     }
 
     @Override
-    public HotbitPeriodResultDto getMarketStatusByPeriode(Integer periode) {
+    public HotbitPeriodDto getMarketStatusByPeriode(Integer periode) {
         HotbitPeriodDto hotbitPeriodDto = null;
         try {
             HttpHeaders headers = new HttpHeaders();
@@ -107,11 +107,11 @@ public class HotbitServiceImpl implements HotbitService {
             log.error(exp.getMessage());
             throw new IllegalArgumentException("Failed to access Hotbit");
         }
-        return hotbitPeriodDto.getResult();
+        return hotbitPeriodDto;
     }
 
     @Override
-    public HotbitBookResultDto getListOfTransaction(Integer side, Integer offset, String limit) {
+    public HotbitBookDto getListOfTransaction(Integer side, Integer offset, String limit) {
         HotbitBookDto hotbitPeriodDto = null;
         try {
             HttpHeaders headers = new HttpHeaders();
@@ -137,11 +137,11 @@ public class HotbitServiceImpl implements HotbitService {
             log.error(exp.getMessage());
             throw new IllegalArgumentException("Failed to access Hotbit");
         }
-        return hotbitPeriodDto.getResult();
+        return hotbitPeriodDto;
     }
 
     @Override
-    public HotbitOrderResultDto postOrder(Integer side, Double amount, Double price, Integer isfee) {
+    public HotbitOrderResponseDto postOrder(Integer side, Double amount, Double price, Integer isfee) {
         HotbitOrderResponseDto hotbitOrderResponseDto = null;
         try {
             String data = "amount=" + amount + "&api_key=" + hotbitConfiguration.getKey() + "&isfee=" + isfee + "&market=BSI/USDT&price=" + price + "&side=" + side;
@@ -170,11 +170,11 @@ public class HotbitServiceImpl implements HotbitService {
             log.error(exp.getMessage());
             throw new IllegalArgumentException("Failed to access Hotbit");
         }
-        return hotbitOrderResponseDto.getResult();
+        return hotbitOrderResponseDto;
     }
 
     @Override
-    public HotbitOrderResultDto cancelOrder(Long orderId) {
+    public HotbitOrderResponseDto cancelOrder(Long orderId) {
         HotbitOrderResponseDto hotbitOrderResponseDto = null;
         try {
             String data = "api_key=" + hotbitConfiguration.getKey() + "&market=BSI/USDT&order_id=" + orderId;
@@ -200,6 +200,6 @@ public class HotbitServiceImpl implements HotbitService {
             log.error(exp.getMessage());
             throw new IllegalArgumentException("Failed to access Hotbit");
         }
-        return hotbitOrderResponseDto.getResult();
+        return hotbitOrderResponseDto;
     }
 }

@@ -1,5 +1,6 @@
 package com.viaje.market.util;
 
+import com.viaje.market.base_dto.BaseError;
 import com.viaje.market.base_dto.GlobalErrorDto;
 import com.viaje.market.base_dto.GlobalMultipleErrorDto;
 import lombok.extern.slf4j.Slf4j;
@@ -36,13 +37,13 @@ public class ExceptionResolver {
     public ResponseEntity<GlobalErrorDto> unauthenticatedHandler(AuthenticationException ex) {
         if (ex.getMessage().equals("No value present"))
             ex = new InternalAuthenticationServiceException("username or password is wrong");
-        GlobalErrorDto GlobalErrorResponse = new GlobalErrorDto(9101, ex.getMessage(), "Invalid Authentication");
+        GlobalErrorDto GlobalErrorResponse = new GlobalErrorDto(new BaseError(9101, "Invalid Authentication"));
         return new ResponseEntity<>(GlobalErrorResponse, HttpStatus.OK);
     }
 
     @ExceptionHandler(value = {IllegalArgumentException.class})
     public ResponseEntity<GlobalErrorDto> globalHandler(IllegalArgumentException ex) {
-        GlobalErrorDto globalErrorResponse = new GlobalErrorDto(HttpStatus.NOT_FOUND.value(), ex.getMessage(), HttpStatus.NOT_FOUND.getReasonPhrase());
+        GlobalErrorDto globalErrorResponse = new GlobalErrorDto(new BaseError(9102, ex.getMessage()));
         return new ResponseEntity<>(globalErrorResponse, HttpStatus.OK);
 
     }

@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class HotbitTodayDto {
-    private String error;
+    private HotbitErrorDto error = null;
 
     private HotbitTodayResultDto result;
 

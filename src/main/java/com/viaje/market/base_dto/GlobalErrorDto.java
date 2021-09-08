@@ -1,16 +1,13 @@
 package com.viaje.market.base_dto;
 
+import com.viaje.market.dto.HotbitErrorDto;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 @Setter
 @Getter
-public class GlobalErrorDto extends BaseDto {
-
-    private String error;
-
-    public GlobalErrorDto(Integer code, String message, String error) {
-        super(code, message);
-        this.error = error;
-    }
+@AllArgsConstructor
+public class GlobalErrorDto {
+    BaseError error;
 }

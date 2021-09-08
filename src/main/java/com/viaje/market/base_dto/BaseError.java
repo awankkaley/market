@@ -1,6 +1,5 @@
 package com.viaje.market.base_dto;
 
-import com.viaje.market.dto.HotbitErrorDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,6 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class BaseDto {
-    protected HotbitErrorDto error;
+public class BaseError {
+    private Integer code;
+    private String Message;
 }

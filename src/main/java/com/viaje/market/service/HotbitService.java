@@ -3,17 +3,17 @@ package com.viaje.market.service;
 import com.viaje.market.dto.*;
 
 public interface HotbitService {
-    HotbitBalanceResultDto getBalance();
+    HotbitBalanceDto getBalance();
 
-    HotbitTodayResultDto getMarketStatusToday();
+    HotbitTodayDto getMarketStatusToday();
 
-    HotbitPeriodResultDto getMarketStatusByPeriode(Integer periode);
+    HotbitPeriodDto getMarketStatusByPeriode(Integer periode);
 
-    HotbitBookResultDto getListOfTransaction(Integer side, Integer offset, String limit);
+    HotbitBookDto getListOfTransaction(Integer side, Integer offset, String limit);
 
-    HotbitOrderResultDto postOrder(Integer side, Double amount, Double price, Integer isfee);
+    HotbitOrderResponseDto postOrder(Integer side, Double amount, Double price, Integer isfee);
 
-    HotbitOrderResultDto cancelOrder(Long orderId);
+    HotbitOrderResponseDto cancelOrder(Long orderId);
 
 
 }

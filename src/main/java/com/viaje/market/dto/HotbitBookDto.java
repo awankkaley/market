@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class HotbitBookDto {
-    private String error;
+    private HotbitErrorDto error = null;
 
     private HotbitBookResultDto result;
 
