@@ -8,5 +8,5 @@ public class HotbitOrderResponseDto {
 
     private HotbitOrderResultDto result;
 
-    private int id;
+    private long id;
 }

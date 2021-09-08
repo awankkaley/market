@@ -8,13 +8,9 @@ import com.viaje.market.util.SignatureUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -150,20 +146,47 @@ public class HotbitServiceImpl implements HotbitService {
         try {
             String data = "amount=" + amount + "&api_key=" + hotbitConfiguration.getKey() + "&isfee=" + isfee + "&market=BSI/USDT&price=" + price + "&side=" + side;
             String sign = SignatureUtil.GenerateSignature(data, hotbitConfiguration);
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-            MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
-            map.add("api_key", hotbitConfiguration.getKey());
-            map.add("market", "BSI/USDT");
-            map.add("side", side.toString());
-            map.add("amount", amount.toString());
-            map.add("price", price.toString());
-            map.add("isfee", isfee.toString());
-            map.add("sign", sign);
-            HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, headers);
-            ResponseEntity<String> response = restTemplate.postForEntity("https://api.hotbit.io/v2/p2/order.put_limit", request, String.class);
+            UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString("https://api.hotbit.io/v2/p2/order.put_limit")
+                    .queryParam("api_key", hotbitConfiguration.getKey())
+                    .queryParam("side", side)
+                    .queryParam("amount", amount)
+                    .queryParam("price", price)
+                    .queryParam("isfee", isfee)
+                    .queryParam("sign", sign)
+                    .queryParam("market", "BSI/USDT");
+            String response = restTemplate.getForObject(uriBuilder.toUriString(), String.class);
             ObjectMapper om = new ObjectMapper();
-            hotbitOrderResponseDto = om.readValue(response.getBody(), HotbitOrderResponseDto.class);
+            hotbitOrderResponseDto = om.readValue(response, HotbitOrderResponseDto.class);
+        } catch (HttpClientErrorException e) {
+            try {
+                JsonNode error = new ObjectMapper().readValue(e.getResponseBodyAsString(), JsonNode.class);
+                log.error(error.toString());
+                throw new IllegalArgumentException("Failed to access Hotbit");
+            } catch (IOException mappingExp) {
+                log.error(mappingExp.getMessage());
+                throw new IllegalArgumentException("Failed to access Hotbit");
+            }
+        } catch (Exception exp) {
+            log.error(exp.getMessage());
+            throw new IllegalArgumentException("Failed to access Hotbit");
+        }
+        return hotbitOrderResponseDto.getResult();
+    }
+
+    @Override
+    public HotbitOrderResultDto cancelOrder(Long orderId) {
+        HotbitOrderResponseDto hotbitOrderResponseDto = null;
+        try {
+            String data = "api_key=" + hotbitConfiguration.getKey() + "&market=BSI/USDT&order_id=" + orderId;
+            String sign = SignatureUtil.GenerateSignature(data, hotbitConfiguration);
+            UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString("https://api.hotbit.io/v2/p2/order.cancel")
+                    .queryParam("api_key", hotbitConfiguration.getKey())
+                    .queryParam("order_id", orderId)
+                    .queryParam("sign", sign)
+                    .queryParam("market", "BSI/USDT");
+            String response = restTemplate.getForObject(uriBuilder.toUriString(), String.class);
+            ObjectMapper om = new ObjectMapper();
+            hotbitOrderResponseDto = om.readValue(response, HotbitOrderResponseDto.class);
         } catch (HttpClientErrorException e) {
             try {
                 JsonNode error = new ObjectMapper().readValue(e.getResponseBodyAsString(), JsonNode.class);

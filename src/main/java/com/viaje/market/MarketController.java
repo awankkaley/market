@@ -7,8 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
 import javax.validation.Valid;
+import java.util.Map;
 
 @RestController
 @AllArgsConstructor
@@ -59,6 +59,15 @@ public class MarketController {
                 9000,
                 HttpStatus.OK.getReasonPhrase(),
                 marketService.postOrder(exchangeCode, orderRequestDto)
+        );
+    }
+
+    @PostMapping("/book/cancel/{exchangeCode}")
+    public GlobalDto<HotbitOrderResultDto> cancel(@Valid @PathVariable Integer exchangeCode, @RequestBody Map<String, Long> orderId) {
+        return new GlobalDto<>(
+                9000,
+                HttpStatus.OK.getReasonPhrase(),
+                marketService.cancelOrder(exchangeCode, orderId.get("orderId"))
         );
     }
 }

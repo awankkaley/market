@@ -13,4 +13,7 @@ public interface HotbitService {
 
     HotbitOrderResultDto postOrder(Integer side, Double amount, Double price, Integer isfee);
 
+    HotbitOrderResultDto cancelOrder(Long orderId);
+
+
 }

@@ -14,5 +14,6 @@ public interface MarketService {
 
     HotbitOrderResultDto postOrder(Integer exchange, OrderRequestDto orderRequestDto);
 
+    HotbitOrderResultDto cancelOrder(Integer exchange, Long orderId);
 
 }

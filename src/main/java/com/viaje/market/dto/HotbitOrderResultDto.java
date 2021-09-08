@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class HotbitOrderResultDto {
-    private int id;
+    private long id;
 
     private String market;
 
@@ -14,7 +14,7 @@ public class HotbitOrderResultDto {
 
     private int side;
 
-    private int user;
+    private long user;
 
     private double ctime;
 
@@ -43,5 +43,8 @@ public class HotbitOrderResultDto {
     private String alt_fee;
 
     private String deal_fee_alt;
+
+    private String freeze = null;
+
 }
 

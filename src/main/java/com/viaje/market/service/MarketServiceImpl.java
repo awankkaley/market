@@ -53,4 +53,13 @@ public class MarketServiceImpl implements MarketService {
             throw new IllegalArgumentException("Exchange Not Found");
         }
     }
+
+    @Override
+    public HotbitOrderResultDto cancelOrder(Integer exchange, Long orderId) {
+        if (exchange == 1) {
+            return hotbitService.cancelOrder(orderId);
+        } else {
+            throw new IllegalArgumentException("Exchange Not Found");
+        }
+    }
 }
