@@ -23,22 +23,15 @@ public class ApiKeyAuthenticationProvider implements AuthenticationProvider {
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String apiKey = (String) authentication.getPrincipal();
-        String signature = (String) authentication.getCredentials();
-        String body = (String) authentication.getDetails();
         log.error("---KEY---" + apiKey);
-        log.error("---SIGNATURE---" + signature);
-        log.error("---BODY---" + body);
         if (ObjectUtils.isEmpty(apiKey)) {
             throw new InsufficientAuthenticationException("No API key in request");
         } else {
             if (!apiKeyConfiguration.getPrincipalRequestValue().equals(apiKey)) {
                 throw new BadCredentialsException("API Key is invalid");
             }
-//            if (HmacValidator.HashIsValid(apiKeyConfiguration.getSecretKey(), body, signature)) {
-                return new ApiKeyAuthenticationToken(apiKey, body, signature, true);
+            return new ApiKeyAuthenticationToken(apiKey, true);
 
-//            }
-//            throw new BadCredentialsException("API Key is invalid");
         }
     }
 

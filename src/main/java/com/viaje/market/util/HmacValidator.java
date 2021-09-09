@@ -1,4 +1,5 @@
 package com.viaje.market.util;
+
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
@@ -8,22 +9,24 @@ import java.util.Base64;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
-public class HmacValidator
-{
+public class HmacValidator {
     public static String ComputeHash(String secret, String payload)
-            throws InvalidKeyException, NoSuchAlgorithmException
-    {
+            throws InvalidKeyException, NoSuchAlgorithmException {
         String digest = "HmacSHA256";
         Mac mac = Mac.getInstance(digest);
         mac.init(new SecretKeySpec(secret.getBytes(), digest));
         return new String(Base64.getEncoder().encode(mac.doFinal(payload.getBytes())));
     }
-    public static boolean HashIsValid(String secret, String payload, String verify)
-            throws InvalidKeyException, NoSuchAlgorithmException, UnsupportedEncodingException
-    {
-        String computedHash = ComputeHash(secret, payload);
-        return MessageDigest.isEqual(computedHash.getBytes(StandardCharsets.UTF_8),
-                verify.getBytes(StandardCharsets.UTF_8));
+
+    public static boolean HashIsValid(String secret, String payload, String verify) {
+        try {
+            String computedHash = ComputeHash(secret, payload);
+            return MessageDigest.isEqual(computedHash.getBytes(StandardCharsets.UTF_8),
+                    verify.getBytes(StandardCharsets.UTF_8));
+        } catch (Exception ex) {
+            throw new IllegalArgumentException("Signature Failed");
+        }
+
     }
 }
 
