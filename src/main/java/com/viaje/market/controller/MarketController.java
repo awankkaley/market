@@ -1,4 +1,4 @@
-package com.viaje.market;
+package com.viaje.market.controller;
 
 import com.viaje.market.base_dto.GlobalDto;
 import com.viaje.market.dto.*;

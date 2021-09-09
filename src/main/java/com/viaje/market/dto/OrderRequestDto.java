@@ -1,6 +1,6 @@
 package com.viaje.market.dto;
 
-import com.viaje.market.OrderEntity;
+import com.viaje.market.entity.OrderEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

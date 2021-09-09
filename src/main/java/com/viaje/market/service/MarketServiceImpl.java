@@ -1,6 +1,6 @@
 package com.viaje.market.service;
 
-import com.viaje.market.OrderEntity;
+import com.viaje.market.entity.OrderEntity;
 import com.viaje.market.repository.OrderRepository;
 import com.viaje.market.api_key.ApiKeyConfiguration;
 import com.viaje.market.dto.*;
@@ -11,7 +11,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 

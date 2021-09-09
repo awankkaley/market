@@ -1,4 +1,4 @@
-package com.viaje.market;
+package com.viaje.market.entity;
 
 import com.viaje.market.base_dto.BaseTimeEntity;
 import com.viaje.market.dto.GlobalExchangeResponse;
