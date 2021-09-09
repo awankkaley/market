@@ -6,7 +6,9 @@ import com.viaje.market.service.MarketService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -54,8 +56,8 @@ public class MarketController {
     }
 
     @PostMapping("/book/order/{exchangeCode}")
-    public GlobalDto<HotbitOrderResultDto> order(@Valid @PathVariable Integer exchangeCode, @RequestBody OrderRequestDto orderRequestDto, @RequestHeader("sign") String signature) {
-        HotbitOrderResponseDto result = marketService.postOrder(exchangeCode, orderRequestDto, signature);
+    public GlobalDto<OrderResponseDto> order(@Valid @PathVariable Integer exchangeCode, @RequestBody OrderRequestDto orderRequestDto, @RequestHeader("sign") String signature) {
+        GlobalExchangeResponse result = marketService.postOrder(exchangeCode, orderRequestDto, signature);
         return new GlobalDto<>(
                 result.getError(),
                 result.getResult()
@@ -63,11 +65,14 @@ public class MarketController {
     }
 
     @PostMapping("/book/cancel/{exchangeCode}")
-    public GlobalDto<HotbitOrderResultDto> cancel(@Valid @PathVariable Integer exchangeCode, @RequestBody Map<String, Long> orderId, @RequestHeader("sign") String signature) {
-        HotbitOrderResponseDto result = marketService.cancelOrder(exchangeCode, orderId.get("orderId"), signature);
-        return new GlobalDto<>(
-                result.getError(),
-                result.getResult()
-        );
+    public GlobalDto<OrderResponseDto> cancel(@Valid @PathVariable Integer exchangeCode, @RequestBody Map<String, Long> orderId, @RequestHeader("sign") String signature) {
+        GlobalExchangeResponse result = marketService.cancelOrder(exchangeCode, orderId.get("orderId"), signature);
+        return new GlobalDto<>(result.getError(), result.getResult());
+    }
+
+    @PostMapping("/book/getall/{page}/{limit}")
+    public GlobalDto<List<OrderResponseDto>> getAll(@PathVariable Integer page, @PathVariable Integer limit, @RequestHeader("sign") String signature) {
+        List<OrderResponseDto> result = marketService.getAllGlobalOrder(page, limit, signature);
+        return new GlobalDto<>(null, result);
     }
 }

@@ -4,16 +4,18 @@ import lombok.AllArgsConstructor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableAsync;
 
 @EnableAsync
 @SpringBootApplication
 @ConfigurationPropertiesScan
 @AllArgsConstructor
+@EnableJpaRepositories(basePackages = {"com.viaje.market.repository"})
 public class MarketApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(MarketApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(MarketApplication.class, args);
+    }
 
 }

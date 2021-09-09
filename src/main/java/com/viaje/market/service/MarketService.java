@@ -3,6 +3,8 @@ package com.viaje.market.service;
 
 import com.viaje.market.dto.*;
 
+import java.util.List;
+
 public interface MarketService {
     HotbitBalanceDto getBalance(Integer exchange, String signature);
 
@@ -12,8 +14,10 @@ public interface MarketService {
 
     HotbitBookDto getListOfTransaction(Integer exchange, String side, String offset, String limit, String signature);
 
-    HotbitOrderResponseDto postOrder(Integer exchange, OrderRequestDto orderRequestDto, String signature);
+    GlobalExchangeResponse postOrder(Integer exchange, OrderRequestDto orderRequestDto, String signature);
 
-    HotbitOrderResponseDto cancelOrder(Integer exchange, Long orderId, String signature);
+    GlobalExchangeResponse cancelOrder(Integer exchange, Long orderId, String signature);
+
+    List<OrderResponseDto> getAllGlobalOrder(Integer page, Integer limit, String signature);
 
 }

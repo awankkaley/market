@@ -22,7 +22,7 @@ public class H2ServerConfiguration {
 
         Server.createTcpServer("-tcp",
                 "-tcpPort",
-                "9092",
+                "9091",
                 "-tcpAllowOthers",
                 "-ifNotExists"
         ).start();
