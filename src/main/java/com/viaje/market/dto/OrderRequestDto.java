@@ -21,9 +21,6 @@ public class OrderRequestDto {
     @NotBlank(message = "Please provide a amount")
     private Double amount;
 
-    @NotBlank(message = "Please provide a price")
-    private Double price;
-
     @NotBlank(message = "Please provide a isFee")
     private Integer isfee;
 
@@ -33,33 +30,21 @@ public class OrderRequestDto {
                 .exchangeCode(exchangeCode)
                 .amount(amount)
                 .side(side)
-                .price(price)
                 .isFee(isfee)
                 .status(status)
                 .build();
     }
 
-    public OrderEntity toOrderEntity(Integer exchangeCode) {
+    public OrderEntity toOrderEntity(Integer exchangeCode,Double price) {
         return OrderEntity.builder()
                 .exchangeOrderId(null)
                 .exchangeCode(exchangeCode)
                 .amount(amount)
+                .currentPrice(price)
                 .side(side)
-                .price(price)
                 .isFee(isfee)
                 .status(0)
                 .build();
     }
 
-    public OrderEntity toOrderEntity(Integer exchangeCode, Integer status) {
-        return OrderEntity.builder()
-                .exchangeOrderId(null)
-                .exchangeCode(exchangeCode)
-                .amount(amount)
-                .side(side)
-                .price(price)
-                .isFee(isfee)
-                .status(status)
-                .build();
-    }
 }

@@ -19,7 +19,11 @@ public class OrderResponseDto {
 
     private Double amount;
 
-    private Double price;
+    private Double buy;
+
+    private Double sell;
+
+    private Double currentPrice;
 
     private Integer isFee;
 
