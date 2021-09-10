@@ -12,4 +12,5 @@ public class HotbitOrderResponseDto {
     private HotbitOrderResultDto result;
 
     private long id;
+
 }

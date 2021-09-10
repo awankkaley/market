@@ -64,6 +64,15 @@ public class MarketController {
         );
     }
 
+    @PostMapping("/book/order/multiple/{exchangeCode}")
+    public GlobalDto<OrderResponseDto> ordermultiple(@Valid @PathVariable Integer exchangeCode, @RequestBody OrderMultipleRequestDto orderRequestDto, @RequestHeader("sign") String signature) {
+        GlobalExchangeResponse result = marketService.postMultipleOrder(exchangeCode, orderRequestDto, signature);
+        return new GlobalDto<>(
+                result.getError(),
+                result.getResult()
+        );
+    }
+
     @PostMapping("/book/cancel/{exchangeCode}")
     public GlobalDto<OrderResponseDto> cancel(@Valid @PathVariable Integer exchangeCode, @RequestBody Map<String, Long> orderId, @RequestHeader("sign") String signature) {
         GlobalExchangeResponse result = marketService.cancelOrder(exchangeCode, orderId.get("orderId"), signature);

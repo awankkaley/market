@@ -16,6 +16,8 @@ public interface MarketService {
 
     GlobalExchangeResponse postOrder(Integer exchange, OrderRequestDto orderRequestDto, String signature);
 
+    GlobalExchangeResponse postMultipleOrder(Integer exchange, OrderMultipleRequestDto orderMultipleRequestDto, String signature);
+
     GlobalExchangeResponse cancelOrder(Integer exchange, Long orderId, String signature);
 
     List<OrderResponseDto> getAllGlobalOrder(Integer page, Integer limit, String signature);

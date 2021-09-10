@@ -21,7 +21,10 @@ public class OrderEntity extends BaseTimeEntity {
     private Long id;
 
     @Column(unique = true)
-    private Long exchangeOrderId;
+    private Long exchangeOrderIdBuy;
+
+    @Column(unique = true)
+    private Long exchangeOrderIdSell;
 
     private Integer exchangeCode;
 
@@ -35,6 +38,10 @@ public class OrderEntity extends BaseTimeEntity {
 
     private Double currentPrice;
 
+    private Double buyPrice;
+
+    private Double sellPrice;
+
     private Integer isFee;
 
     private Integer status;
@@ -47,13 +54,16 @@ public class OrderEntity extends BaseTimeEntity {
     public String toString() {
         return "OrderEntity{" +
                 "id=" + id +
-                ", exchangeOrderId=" + exchangeOrderId +
+                ", exchangeOrderIdBuy=" + exchangeOrderIdBuy +
+                ", exchangeOrderIdSell=" + exchangeOrderIdSell +
                 ", exchangeCode=" + exchangeCode +
                 ", side=" + side +
                 ", amount=" + amount +
                 ", buy=" + buy +
                 ", sell=" + sell +
                 ", currentPrice=" + currentPrice +
+                ", buyPrice=" + buyPrice +
+                ", sellPrice=" + sellPrice +
                 ", isFee=" + isFee +
                 ", status=" + status +
                 ", info='" + info + '\'' +
@@ -64,20 +74,23 @@ public class OrderEntity extends BaseTimeEntity {
     public GlobalExchangeResponse toDto(HotbitErrorDto error) {
         return GlobalExchangeResponse.builder()
                 .error(error)
-                .result(new OrderResponseDto(id, exchangeOrderId, exchangeCode, side, amount, buy, sell, currentPrice, isFee, status, info, isValid))
+                .result(new OrderResponseDto(id, exchangeOrderIdBuy, exchangeOrderIdSell, exchangeCode, side, amount, buy, sell, currentPrice, buyPrice, sellPrice, isFee, status, info, isValid))
                 .build();
     }
 
     public OrderResponseDto toDtoList() {
         return OrderResponseDto.builder()
                 .id(id)
-                .exchangeOrderId(exchangeOrderId)
+                .exchangeOrderIdBuy(exchangeOrderIdBuy)
+                .exchangeOrderIdSell(exchangeOrderIdSell)
                 .exchangeCode(exchangeCode)
                 .side(side)
                 .amount(amount)
                 .buy(buy)
                 .sell(sell)
                 .currentPrice(currentPrice)
+                .buyPrice(buyPrice)
+                .sellPrice(sellPrice)
                 .isFee(isFee)
                 .status(status)
                 .info(info)
