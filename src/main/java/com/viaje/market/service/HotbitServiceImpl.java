@@ -202,4 +202,34 @@ public class HotbitServiceImpl implements HotbitService {
         }
         return hotbitOrderResponseDto;
     }
+
+    @Override
+    public HotbitSuccessResponseDto checkSuccessStatus(Long orderId) {
+        HotbitSuccessResponseDto hotbitSuccessResponseDto = null;
+        try {
+            String data = "api_key=" + hotbitConfiguration.getKey() + "&offset=0&order_id=" + orderId;
+            String sign = SignatureUtil.GenerateSignature(data, hotbitConfiguration);
+            UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString("https://api.hotbit.io/v2/p2/order.finished_detail")
+                    .queryParam("api_key", hotbitConfiguration.getKey())
+                    .queryParam("order_id", orderId)
+                    .queryParam("sign", sign)
+                    .queryParam("offset", "0");
+            String response = restTemplate.getForObject(uriBuilder.toUriString(), String.class);
+            ObjectMapper om = new ObjectMapper();
+            hotbitSuccessResponseDto = om.readValue(response, HotbitSuccessResponseDto.class);
+        } catch (HttpClientErrorException e) {
+            try {
+                JsonNode error = new ObjectMapper().readValue(e.getResponseBodyAsString(), JsonNode.class);
+                log.error(error.toString());
+                throw new IllegalArgumentException("Failed to access Hotbit");
+            } catch (IOException mappingExp) {
+                log.error(mappingExp.getMessage());
+                throw new IllegalArgumentException("Failed to access Hotbit");
+            }
+        } catch (Exception exp) {
+            log.error(exp.getMessage());
+            throw new IllegalArgumentException("Failed to access Hotbit");
+        }
+        return hotbitSuccessResponseDto;
+    }
 }

@@ -84,4 +84,13 @@ public class MarketController {
         List<OrderResponseDto> result = marketService.getAllGlobalOrder(page, limit, signature);
         return new GlobalDto<>(null, result);
     }
+
+    @GetMapping("/book/success/{exchangeCode}")
+    public GlobalDto<HotbitSuccessResultDto> checkSuccess(@Valid @PathVariable Integer exchangeCode, @RequestBody Map<String, Long> orderId, @RequestHeader("sign") String signature) {
+        HotbitSuccessResponseDto result = marketService.checkSuccessStatus(exchangeCode, orderId.get("orderId"), signature);
+        return new GlobalDto<>(
+                result.getError(),
+                result.getResult()
+        );
+    }
 }

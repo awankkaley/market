@@ -22,4 +22,7 @@ public interface MarketService {
 
     List<OrderResponseDto> getAllGlobalOrder(Integer page, Integer limit, String signature);
 
+    HotbitSuccessResponseDto checkSuccessStatus(Integer exchange, Long orderId, String signature);
+
+
 }

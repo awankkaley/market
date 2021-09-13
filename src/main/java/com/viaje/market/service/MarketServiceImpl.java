@@ -88,7 +88,7 @@ public class MarketServiceImpl implements MarketService {
         OrderEntity order = orderRepository.save(orderRequestDto.toOrderEntity(exchange, marketPrice));
         if (Objects.equals(exchange, ConstantValue.EXCHANGE_HOTBIT)) {
             HotbitOrderResponseDto result = hotbitService.postOrder(orderRequestDto.getSide(), orderRequestDto.getAmount(), marketPrice, orderRequestDto.getIsfee());
-            if (result.getError() == null) {
+            if (result != null && result.getError() == null) {
                 order.setStatus(ConstantValue.CREATED);
                 order.setValid(true);
                 if (Objects.equals(orderRequestDto.getSide(), ConstantValue.SIDE_SELL)) {
@@ -101,16 +101,24 @@ public class MarketServiceImpl implements MarketService {
                     order.setBuy(Double.valueOf(result.getResult().getAmount()));
                     order.setBuyPrice(Double.valueOf(result.getResult().getPrice()));
                 }
+                OrderEntity result2 = orderRepository.save(order);
+                return result2.toDto(null);
             } else {
+                HotbitErrorDto error = new HotbitErrorDto(9031, "failed to access hotbit");
                 order.setStatus(ConstantValue.FAILED);
-                order.setInfo(result.getError().getMessage());
+                if (result != null) {
+                    error.setCode(result.getError().getCode());
+                    error.setMessage(result.getError().getMessage());
+                }
+                order.setInfo(error.getMessage());
                 order.setValid(true);
+                orderRepository.save(order);
+                throw new IllegalArgumentException(error.getMessage());
             }
-            OrderEntity result2 = orderRepository.save(order);
-            return result2.toDto(result.getError());
         } else {
             throw new IllegalArgumentException("Exchange Not Found");
         }
+
     }
 
     @Override
@@ -179,6 +187,17 @@ public class MarketServiceImpl implements MarketService {
         return orderRepository.findAllOrdersWithPagination(paging).stream()
                 .map(OrderEntity::toDtoList)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public HotbitSuccessResponseDto checkSuccessStatus(Integer exchange, Long orderId, String signature) {
+//        String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&exchange=" + exchange + "&orderId=" + orderId;
+//        signatureService.isValidSignature(payload, signature);
+        if (Objects.equals(exchange, ConstantValue.EXCHANGE_HOTBIT)) {
+            return hotbitService.checkSuccessStatus(orderId);
+        } else {
+            throw new IllegalArgumentException("Exchange Not Found");
+        }
     }
 
 

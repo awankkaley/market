@@ -15,5 +15,8 @@ public interface HotbitService {
 
     HotbitOrderResponseDto cancelOrder(Long orderId);
 
+    HotbitSuccessResponseDto checkSuccessStatus(Long orderId);
+
+
 
 }
