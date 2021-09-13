@@ -16,7 +16,7 @@ public interface MarketService {
 
     GlobalExchangeResponse postOrder(Integer exchange, OrderRequestDto orderRequestDto, String signature);
 
-    GlobalExchangeResponse postMultipleOrder(Integer exchange, OrderMultipleRequestDto orderMultipleRequestDto, String signature);
+    GlobaExchangeMultipleResponse postMultipleOrder(Integer exchange, OrderMultipleRequestDto orderMultipleRequestDto, String signature);
 
     GlobalExchangeResponse cancelOrder(Integer exchange, Long orderId, String signature);
 
@@ -24,5 +24,6 @@ public interface MarketService {
 
     HotbitSuccessResponseDto checkSuccessStatus(Integer exchange, Long orderId, String signature);
 
+    void checkStatusPeriodically();
 
 }

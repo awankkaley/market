@@ -25,15 +25,13 @@ public class OrderMultipleRequestDto {
     private Integer isfee;
 
 
-    public OrderEntity toOrderEntity(Integer exchangeCode, Double price) {
+    public OrderEntity toOrderEntity(Integer exchangeCode, Double price, Integer side, Double amount) {
         return OrderEntity.builder()
-                .exchangeOrderIdBuy(null)
+                .exchangeOrderId(null)
                 .exchangeCode(exchangeCode)
                 .amount(amount)
                 .currentPrice(price)
-                .sell(Util.getAmountSellFromPercentage(buyPercent, amount))
-                .buy(Util.getAmountBuyFromPercentage(buyPercent, amount))
-                .side(3)
+                .side(side)
                 .isFee(isfee)
                 .status(0)
                 .build();

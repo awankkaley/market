@@ -11,9 +11,7 @@ public class OrderResponseDto {
 
     private Long id;
 
-    private Long exchangeOrderIdBuy;
-
-    private Long exchangeOrderIdSell;
+    private Long exchangeOrderId;
 
     private Integer exchangeCode;
 
@@ -21,15 +19,9 @@ public class OrderResponseDto {
 
     private Double amount;
 
-    private Double buy;
-
-    private Double sell;
-
     private Double currentPrice;
 
-    private Double buyPrice;
-
-    private Double sellPrice;
+    private Double price;
 
     private Integer isFee;
 

@@ -1,6 +1,7 @@
 package com.viaje.market.entity;
 
 import com.viaje.market.base_dto.BaseTimeEntity;
+import com.viaje.market.dto.GlobaExchangeMultipleResponse;
 import com.viaje.market.dto.GlobalExchangeResponse;
 import com.viaje.market.dto.HotbitErrorDto;
 import com.viaje.market.dto.OrderResponseDto;
@@ -21,10 +22,7 @@ public class OrderEntity extends BaseTimeEntity {
     private Long id;
 
     @Column(unique = true)
-    private Long exchangeOrderIdBuy;
-
-    @Column(unique = true)
-    private Long exchangeOrderIdSell;
+    private Long exchangeOrderId;
 
     private Integer exchangeCode;
 
@@ -32,15 +30,9 @@ public class OrderEntity extends BaseTimeEntity {
 
     private Double amount;
 
-    private Double buy;
-
-    private Double sell;
-
     private Double currentPrice;
 
-    private Double buyPrice;
-
-    private Double sellPrice;
+    private Double price;
 
     private Integer isFee;
 
@@ -54,16 +46,12 @@ public class OrderEntity extends BaseTimeEntity {
     public String toString() {
         return "OrderEntity{" +
                 "id=" + id +
-                ", exchangeOrderIdBuy=" + exchangeOrderIdBuy +
-                ", exchangeOrderIdSell=" + exchangeOrderIdSell +
+                ", exchangeOrderId=" + exchangeOrderId +
                 ", exchangeCode=" + exchangeCode +
                 ", side=" + side +
                 ", amount=" + amount +
-                ", buy=" + buy +
-                ", sell=" + sell +
                 ", currentPrice=" + currentPrice +
-                ", buyPrice=" + buyPrice +
-                ", sellPrice=" + sellPrice +
+                ", price=" + price +
                 ", isFee=" + isFee +
                 ", status=" + status +
                 ", info='" + info + '\'' +
@@ -74,23 +62,19 @@ public class OrderEntity extends BaseTimeEntity {
     public GlobalExchangeResponse toDto(HotbitErrorDto error) {
         return GlobalExchangeResponse.builder()
                 .error(error)
-                .result(new OrderResponseDto(id, exchangeOrderIdBuy, exchangeOrderIdSell, exchangeCode, side, amount, buy, sell, currentPrice, buyPrice, sellPrice, isFee, status, info, isValid))
+                .result(new OrderResponseDto(id, exchangeOrderId, exchangeCode, side, amount, currentPrice, price, isFee, status, info, isValid))
                 .build();
     }
 
     public OrderResponseDto toDtoList() {
         return OrderResponseDto.builder()
                 .id(id)
-                .exchangeOrderIdBuy(exchangeOrderIdBuy)
-                .exchangeOrderIdSell(exchangeOrderIdSell)
+                .exchangeOrderId(exchangeOrderId)
                 .exchangeCode(exchangeCode)
                 .side(side)
                 .amount(amount)
-                .buy(buy)
-                .sell(sell)
                 .currentPrice(currentPrice)
-                .buyPrice(buyPrice)
-                .sellPrice(sellPrice)
+                .price(price)
                 .isFee(isFee)
                 .status(status)
                 .info(info)

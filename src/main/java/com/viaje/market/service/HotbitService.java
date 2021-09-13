@@ -2,6 +2,8 @@ package com.viaje.market.service;
 
 import com.viaje.market.dto.*;
 
+import java.util.List;
+
 public interface HotbitService {
     HotbitBalanceDto getBalance();
 

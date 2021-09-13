@@ -17,6 +17,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -157,6 +158,9 @@ public class HotbitServiceImpl implements HotbitService {
             String response = restTemplate.getForObject(uriBuilder.toUriString(), String.class);
             ObjectMapper om = new ObjectMapper();
             hotbitOrderResponseDto = om.readValue(response, HotbitOrderResponseDto.class);
+            if (hotbitOrderResponseDto.getError() != null){
+                return null;
+            }
         } catch (HttpClientErrorException e) {
             try {
                 JsonNode error = new ObjectMapper().readValue(e.getResponseBodyAsString(), JsonNode.class);
@@ -232,4 +236,6 @@ public class HotbitServiceImpl implements HotbitService {
         }
         return hotbitSuccessResponseDto;
     }
+
+
 }
