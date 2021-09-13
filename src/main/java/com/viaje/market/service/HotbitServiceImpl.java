@@ -161,14 +161,14 @@ public class HotbitServiceImpl implements HotbitService {
             try {
                 JsonNode error = new ObjectMapper().readValue(e.getResponseBodyAsString(), JsonNode.class);
                 log.error(error.toString());
-                throw new IllegalArgumentException("Failed to access Hotbit");
+                return null;
             } catch (IOException mappingExp) {
                 log.error(mappingExp.getMessage());
-                throw new IllegalArgumentException("Failed to access Hotbit");
+                return null;
             }
         } catch (Exception exp) {
             log.error(exp.getMessage());
-            throw new IllegalArgumentException("Failed to access Hotbit");
+            return null;
         }
         return hotbitOrderResponseDto;
     }

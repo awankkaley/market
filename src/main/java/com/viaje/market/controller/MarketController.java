@@ -55,7 +55,7 @@ public class MarketController {
         );
     }
 
-    @PostMapping("/book/order/{exchangeCode}")
+    @PostMapping("/book/order/single/{exchangeCode}")
     public GlobalDto<OrderResponseDto> order(@Valid @PathVariable Integer exchangeCode, @RequestBody OrderRequestDto orderRequestDto, @RequestHeader("sign") String signature) {
         GlobalExchangeResponse result = marketService.postOrder(exchangeCode, orderRequestDto, signature);
         return new GlobalDto<>(
@@ -64,7 +64,7 @@ public class MarketController {
         );
     }
 
-    @PostMapping("/book/order/multiple/{exchangeCode}")
+    @PostMapping("/book/order/both/{exchangeCode}")
     public GlobalDto<OrderResponseDto> ordermultiple(@Valid @PathVariable Integer exchangeCode, @RequestBody OrderMultipleRequestDto orderRequestDto, @RequestHeader("sign") String signature) {
         GlobalExchangeResponse result = marketService.postMultipleOrder(exchangeCode, orderRequestDto, signature);
         return new GlobalDto<>(
