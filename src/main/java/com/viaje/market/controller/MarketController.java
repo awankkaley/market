@@ -79,18 +79,24 @@ public class MarketController {
         return new GlobalDto<>(result.getError(), result.getResult());
     }
 
-    @PostMapping("/book/getall/{page}/{limit}")
+    @GetMapping("/book/all/{page}/{limit}")
     public GlobalDto<List<OrderResponseDto>> getAll(@PathVariable Integer page, @PathVariable Integer limit, @RequestHeader("sign") String signature) {
-        List<OrderResponseDto> result = marketService.getAllGlobalOrder(page, limit, signature);
+        List<OrderResponseDto> result = marketService.getAll(page, limit, signature);
         return new GlobalDto<>(null, result);
     }
 
-    @GetMapping("/book/success/{exchangeCode}")
-    public GlobalDto<HotbitSuccessResultDto> checkSuccess(@Valid @PathVariable Integer exchangeCode, @RequestBody Map<String, Long> orderId, @RequestHeader("sign") String signature) {
-        HotbitSuccessResponseDto result = marketService.checkSuccessStatus(exchangeCode, orderId.get("orderId"), signature);
+    @GetMapping("/book/by_status/{page}/{limit}/{status}")
+    public GlobalDto<List<OrderResponseDto>> getByStatus(@PathVariable Integer page, @PathVariable Integer limit, @PathVariable Integer status, @RequestHeader("sign") String signature) {
+        List<OrderResponseDto> result = marketService.getAllByStatus(page, limit, status, signature);
+        return new GlobalDto<>(null, result);
+    }
+
+    @GetMapping("/book/by_id")
+    public GlobalDto<OrderResponseDto> checkSuccess(@RequestBody Map<String, Long> orderId, @RequestHeader("sign") String signature) {
+        OrderResponseDto result = marketService.getById(orderId.get("orderId"), signature);
         return new GlobalDto<>(
-                result.getError(),
-                result.getResult()
+                null,
+                result
         );
     }
 }

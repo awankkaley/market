@@ -20,9 +20,11 @@ public interface MarketService {
 
     GlobalExchangeResponse cancelOrder(Integer exchange, Long orderId, String signature);
 
-    List<OrderResponseDto> getAllGlobalOrder(Integer page, Integer limit, String signature);
+    List<OrderResponseDto> getAll(Integer page, Integer limit, String signature);
 
-    HotbitSuccessResponseDto checkSuccessStatus(Integer exchange, Long orderId, String signature);
+    List<OrderResponseDto> getAllByStatus(Integer page, Integer limit, Integer status, String signature);
+
+    OrderResponseDto getById(Long orderId, String signature);
 
     void checkStatusPeriodically();
 

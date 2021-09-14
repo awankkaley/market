@@ -26,8 +26,8 @@ appication:
       secret: d29ec2b386d154a3a85fcc24994a2474
       key: 7b647764-7280-2c3a-408ac24e3e52ee1c
 
-logging.level.org.apache.http: DEBUG
-logging.level.httpclient.wire: DEBUG
+#logging.level.org.apache.http: DEBUG
+#logging.level.httpclient.wire: DEBUG
 
 spring.jpa.properties.hibernate.dialect: org.hibernate.dialect.MySQL57Dialect
 spring.jpa.properties.hibernate.dialect.storage_engine: innodb

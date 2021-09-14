@@ -23,7 +23,6 @@ public class ApiKeyAuthenticationProvider implements AuthenticationProvider {
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String apiKey = (String) authentication.getPrincipal();
-        log.error("---KEY---" + apiKey);
         if (ObjectUtils.isEmpty(apiKey)) {
             throw new InsufficientAuthenticationException("No API key in request");
         } else {

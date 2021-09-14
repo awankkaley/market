@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -149,19 +150,23 @@ public class MarketServiceImpl implements MarketService {
     public GlobalExchangeResponse cancelOrder(Integer exchange, Long orderId, String signature) {
 //        String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&exchange=" + exchange + "&orderId=" + orderId;
 //        signatureService.isValidSignature(payload, signature);
-        // TODO: 10/09/21 Check If Order Success
         OrderEntity order = orderRepository.findByIdAndStatus(orderId, 1).orElseThrow(
                 () -> new IllegalArgumentException("Data Not Found")
         );
         if (Objects.equals(exchange, ConstantValue.EXCHANGE_HOTBIT)) {
-            HotbitOrderResponseDto result = hotbitService.cancelOrder(order.getExchangeOrderId());
-            if (result.getError() == null) {
-                order.setStatus(ConstantValue.FAILED);
-                order.setInfo("Cancel by Viaje");
-                order.setValid(true);
+            HotbitSuccessResponseDto hotbitSuccessResponseDto = hotbitService.checkSuccessStatus(order.getExchangeOrderId());
+            if (hotbitSuccessResponseDto.getResult().getRecords().isEmpty()) {
+                HotbitOrderResponseDto result = hotbitService.cancelOrder(order.getExchangeOrderId());
+                if (result.getError() == null) {
+                    order.setStatus(ConstantValue.FAILED);
+                    order.setInfo("Cancel by Viaje");
+                    order.setValid(true);
+                }
+                OrderEntity result2 = orderRepository.save(order);
+                return result2.toDto(result.getError());
+            } else {
+                throw new IllegalArgumentException("Transaction has been settled");
             }
-            OrderEntity result2 = orderRepository.save(order);
-            return result2.toDto(result.getError());
 
         } else {
             throw new IllegalArgumentException("Exchange Not Found");
@@ -169,7 +174,7 @@ public class MarketServiceImpl implements MarketService {
     }
 
     @Override
-    public List<OrderResponseDto> getAllGlobalOrder(Integer page, Integer limit, String signature) {
+    public List<OrderResponseDto> getAll(Integer page, Integer limit, String signature) {
 //        String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&page=" + page + "&limit=" + limit;
 //        signatureService.isValidSignature(payload, signature);
         Pageable paging = PageRequest.of(page, limit, Sort.by("id").descending());
@@ -179,21 +184,39 @@ public class MarketServiceImpl implements MarketService {
     }
 
     @Override
-    public HotbitSuccessResponseDto checkSuccessStatus(Integer exchange, Long orderId, String signature) {
-//        String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&exchange=" + exchange + "&orderId=" + orderId;
+    public List<OrderResponseDto> getAllByStatus(Integer page, Integer limit, Integer status, String signature) {
+//        String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&page=" + page + "&limit=" + limit + "&status=" + status;
 //        signatureService.isValidSignature(payload, signature);
-        if (Objects.equals(exchange, ConstantValue.EXCHANGE_HOTBIT)) {
-            return hotbitService.checkSuccessStatus(orderId);
-        } else {
-            throw new IllegalArgumentException("Exchange Not Found");
-        }
+        Pageable paging = PageRequest.of(page, limit, Sort.by("id").descending());
+        return orderRepository.findAllOrdersWithPaginationAnStatus(paging, status).stream()
+                .map(OrderEntity::toDtoList)
+                .collect(Collectors.toList());
     }
 
+
+    @Override
+    public OrderResponseDto getById(Long orderId, String signature) {
+//        String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&orderId=" + orderId;
+//        signatureService.isValidSignature(payload, signature);
+        OrderEntity result = orderRepository.findById(orderId).orElseThrow(() -> new IllegalArgumentException("Data Not Found"));
+        return result.toDtoList();
+    }
+
+    @Async
     @Override
     public void checkStatusPeriodically() {
-        List<OrderEntity> order = orderRepository.findAll();
+        List<OrderEntity> order = orderRepository.findByStatusAndIsValid(1, true);
         if (order.size() != 0) {
-            List<Long> orderIdBuy = order.stream().map(OrderEntity::getExchangeOrderId).collect(Collectors.toList());
+            for (OrderEntity orderEntity : order) {
+                HotbitSuccessResponseDto hotbitSuccessResponseDto = hotbitService.checkSuccessStatus(orderEntity.getExchangeOrderId());
+                log.error("STATUS PERIODIC : " + hotbitSuccessResponseDto.getResult().getRecords());
+                if (!hotbitSuccessResponseDto.getResult().getRecords().isEmpty()) {
+                    orderEntity.setStatus(ConstantValue.SUCCESS);
+                    orderRepository.save(orderEntity);
+                }
+            }
+        } else {
+            log.error("STATUS PERIODIC EMPTY");
         }
     }
 
