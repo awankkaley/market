@@ -1,4 +1,4 @@
-package com.viaje.market;
+package com.viaje.market.scheduler;
 
 import com.viaje.market.service.MarketService;
 import lombok.extern.slf4j.Slf4j;
