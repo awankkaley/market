@@ -46,15 +46,6 @@ public class MarketController {
         );
     }
 
-    @GetMapping("/book/transaction/{exchangeCode}")
-    public GlobalDto<HotbitBookResultDto> transaction(@Valid @PathVariable Integer exchangeCode, @RequestParam String side, @RequestParam String offset, @RequestParam String limit, @RequestHeader("sign") String signature) {
-        HotbitBookDto result = marketService.getListOfTransaction(exchangeCode, side, offset, limit, signature);
-        return new GlobalDto<>(
-                result.getError(),
-                result.getResult()
-        );
-    }
-
     @PostMapping("/book/order/single/{exchangeCode}")
     public GlobalDto<OrderResponseDto> order(@Valid @PathVariable Integer exchangeCode, @RequestBody OrderRequestDto orderRequestDto, @RequestHeader("sign") String signature) {
         GlobalExchangeResponse result = marketService.postOrder(exchangeCode, orderRequestDto, signature);
@@ -91,9 +82,9 @@ public class MarketController {
         return new GlobalDto<>(null, result);
     }
 
-    @GetMapping("/book/by_id")
-    public GlobalDto<OrderResponseDto> checkSuccess(@RequestBody Map<String, Long> orderId, @RequestHeader("sign") String signature) {
-        OrderResponseDto result = marketService.getById(orderId.get("orderId"), signature);
+    @GetMapping("/book/by_id/{id}")
+    public GlobalDto<OrderResponseDto> checkSuccess(@PathVariable Long id, @RequestHeader("sign") String signature) {
+        OrderResponseDto result = marketService.getById(id, signature);
         return new GlobalDto<>(
                 null,
                 result

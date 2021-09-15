@@ -17,7 +17,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.List;
 
 @Slf4j
 @Service
@@ -34,7 +33,7 @@ public class HotbitServiceImpl implements HotbitService {
         HotbitBalanceDto hotbitBalanceDto = null;
         try {
             String data = "api_key=" + hotbitConfiguration.getKey() + "&assets=[]";
-            String sign = SignatureUtil.GenerateSignature(data, hotbitConfiguration);
+            String sign = SignatureUtil.GenerateSignatureHotbit(data, hotbitConfiguration);
             String url = "https://api.hotbit.io/v2/p2/balance.query?api_key=" + hotbitConfiguration.getKey() + "&" + data + "&sign=" + sign;
             String response = restTemplate.getForObject(url, String.class);
             ObjectMapper om = new ObjectMapper();
@@ -146,7 +145,7 @@ public class HotbitServiceImpl implements HotbitService {
         HotbitOrderResponseDto hotbitOrderResponseDto = null;
         try {
             String data = "amount=" + amount + "&api_key=" + hotbitConfiguration.getKey() + "&isfee=" + isfee + "&market=BSI/USDT&price=" + price + "&side=" + side;
-            String sign = SignatureUtil.GenerateSignature(data, hotbitConfiguration);
+            String sign = SignatureUtil.GenerateSignatureHotbit(data, hotbitConfiguration);
             UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString("https://api.hotbit.io/v2/p2/order.put_limit")
                     .queryParam("api_key", hotbitConfiguration.getKey())
                     .queryParam("side", side)
@@ -182,7 +181,7 @@ public class HotbitServiceImpl implements HotbitService {
         HotbitOrderResponseDto hotbitOrderResponseDto = null;
         try {
             String data = "api_key=" + hotbitConfiguration.getKey() + "&market=BSI/USDT&order_id=" + orderId;
-            String sign = SignatureUtil.GenerateSignature(data, hotbitConfiguration);
+            String sign = SignatureUtil.GenerateSignatureHotbit(data, hotbitConfiguration);
             UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString("https://api.hotbit.io/v2/p2/order.cancel")
                     .queryParam("api_key", hotbitConfiguration.getKey())
                     .queryParam("order_id", orderId)
@@ -212,7 +211,7 @@ public class HotbitServiceImpl implements HotbitService {
         HotbitSuccessResponseDto hotbitSuccessResponseDto = null;
         try {
             String data = "api_key=" + hotbitConfiguration.getKey() + "&offset=0&order_id=" + orderId;
-            String sign = SignatureUtil.GenerateSignature(data, hotbitConfiguration);
+            String sign = SignatureUtil.GenerateSignatureHotbit(data, hotbitConfiguration);
             UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString("https://api.hotbit.io/v2/p2/order.finished_detail")
                     .queryParam("api_key", hotbitConfiguration.getKey())
                     .queryParam("order_id", orderId)

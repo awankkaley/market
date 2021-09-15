@@ -12,8 +12,6 @@ public interface MarketService {
 
     HotbitPeriodDto getMarketStatusByPeriode(Integer exchange, Integer periode, String signature);
 
-    HotbitBookDto getListOfTransaction(Integer exchange, String side, String offset, String limit, String signature);
-
     GlobalExchangeResponse postOrder(Integer exchange, OrderRequestDto orderRequestDto, String signature);
 
     GlobaExchangeMultipleResponse postMultipleOrder(Integer exchange, OrderMultipleRequestDto orderMultipleRequestDto, String signature);
