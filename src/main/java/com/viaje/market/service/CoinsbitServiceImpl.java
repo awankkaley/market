@@ -55,6 +55,7 @@ public class CoinsbitServiceImpl implements CoinsbitService {
             HttpEntity<Map<String, Object>> entity = new HttpEntity<>(json, headers);
             ResponseEntity<String> response = restTemplate.postForEntity(fullUrl, entity, String.class);
             ObjectMapper om = new ObjectMapper();
+
             coinsbitBalanceDto = om.readValue(response.getBody(), CoinsbitBalanceDto.class);
         } catch (HttpClientErrorException e) {
             try {

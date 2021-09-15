@@ -16,6 +16,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
 import java.util.Base64;
+import java.util.Formatter;
 
 import static javax.xml.crypto.dsig.SignatureMethod.HMAC_SHA512;
 
@@ -48,12 +49,20 @@ public class SignatureUtil {
             Mac sha256_HMAC = Mac.getInstance("HmacSHA512");
             SecretKeySpec secret_key = new SecretKeySpec(coinsbitConfiguration.getSecret().getBytes(), "HmacSHA512");
             sha256_HMAC.init(secret_key);
-            String hash = Base64.getEncoder().encodeToString(sha256_HMAC.doFinal(payload.getBytes()));
+            String hash = toHexString(sha256_HMAC.doFinal(payload.getBytes()));
             return new CoinsbitSignature(hash, payload, result);
 
         } catch (Exception e) {
             e.printStackTrace();
             throw new IllegalArgumentException(e.getMessage());
         }
+    }
+
+    private static String toHexString(byte[] bytes) {
+        Formatter formatter = new Formatter();
+        for (byte b : bytes) {
+            formatter.format("%02x", b);
+        }
+        return formatter.toString();
     }
 }
