@@ -144,7 +144,9 @@ public class CoinsbitServiceImpl implements CoinsbitService {
             String cleanResponse = Objects.requireNonNull(response.getBody()).replace("[[", "").replace("]]", "").replace("[]", "null");
             log.error("--RESPONSE-- : " + cleanResponse);
             coinsbitOrderDto = om.readValue(cleanResponse, CoinsbitOrderDto.class);
-
+            if (!coinsbitOrderDto.isSuccess()) {
+                return null;
+            }
         } catch (HttpClientErrorException e) {
             try {
                 JsonNode error = new ObjectMapper().readValue(e.getResponseBodyAsString(), JsonNode.class);
