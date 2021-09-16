@@ -9,13 +9,14 @@ import com.viaje.market.dto.hotbit_order.OrderMultipleRequestDto;
 import com.viaje.market.dto.hotbit_order.OrderRequestDto;
 import com.viaje.market.dto.hotbit_order.OrderResponseDto;
 import com.viaje.market.dto.response.BalanceResponseDto;
+import com.viaje.market.dto.response.MarketResponse;
 
 import java.util.List;
 
 public interface MarketService {
     BalanceResponseDto getBalance(Integer exchange, String signature);
 
-    HotbitTodayDto getMarketStatusToday(Integer exchange, String signature);
+    MarketResponse getMarketStatusToday(Integer exchange, String signature);
 
     HotbitPeriodDto getMarketStatusByPeriode(Integer exchange, Integer periode, String signature);
 

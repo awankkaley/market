@@ -115,35 +115,6 @@ public class HotbitServiceImpl implements HotbitService {
         return hotbitPeriodDto;
     }
 
-    @Override
-    public HotbitBookDto getListOfTransaction(Integer side, Integer offset, String limit) {
-        HotbitBookDto hotbitPeriodDto = null;
-        try {
-            HttpHeaders headers = new HttpHeaders();
-            headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-            UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString("https://api.hotbit.io/v2/p1/order.book")
-                    .queryParam("side", side)
-                    .queryParam("offset", offset)
-                    .queryParam("limit", limit)
-                    .queryParam("market", "BSI/USDT");
-            String response = restTemplate.getForObject(uriBuilder.toUriString(), String.class, headers);
-            ObjectMapper om = new ObjectMapper();
-            hotbitPeriodDto = om.readValue(response, HotbitBookDto.class);
-        } catch (HttpClientErrorException e) {
-            try {
-                JsonNode error = new ObjectMapper().readValue(e.getResponseBodyAsString(), JsonNode.class);
-                log.error(error.toString());
-                throw new IllegalArgumentException("Failed to access Hotbit");
-            } catch (IOException mappingExp) {
-                log.error(mappingExp.getMessage());
-                throw new IllegalArgumentException("Failed to access Hotbit");
-            }
-        } catch (Exception exp) {
-            log.error(exp.getMessage());
-            throw new IllegalArgumentException("Failed to access Hotbit");
-        }
-        return hotbitPeriodDto;
-    }
 
     @Override
     public HotbitOrderResponseDto postOrder(Integer side, Double amount, Double price, Integer isfee) {
@@ -162,7 +133,7 @@ public class HotbitServiceImpl implements HotbitService {
             String response = restTemplate.getForObject(uriBuilder.toUriString(), String.class);
             ObjectMapper om = new ObjectMapper();
             hotbitOrderResponseDto = om.readValue(response, HotbitOrderResponseDto.class);
-            if (hotbitOrderResponseDto.getError() != null){
+            if (hotbitOrderResponseDto.getError() != null) {
                 return null;
             }
         } catch (HttpClientErrorException e) {
@@ -241,5 +212,36 @@ public class HotbitServiceImpl implements HotbitService {
         return hotbitSuccessResponseDto;
     }
 
+
+
+//    @Override
+//    public HotbitBookDto getListOfTransaction(Integer side, Integer offset, String limit) {
+//        HotbitBookDto hotbitPeriodDto = null;
+//        try {
+//            HttpHeaders headers = new HttpHeaders();
+//            headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+//            UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString("https://api.hotbit.io/v2/p1/order.book")
+//                    .queryParam("side", side)
+//                    .queryParam("offset", offset)
+//                    .queryParam("limit", limit)
+//                    .queryParam("market", "BSI/USDT");
+//            String response = restTemplate.getForObject(uriBuilder.toUriString(), String.class, headers);
+//            ObjectMapper om = new ObjectMapper();
+//            hotbitPeriodDto = om.readValue(response, HotbitBookDto.class);
+//        } catch (HttpClientErrorException e) {
+//            try {
+//                JsonNode error = new ObjectMapper().readValue(e.getResponseBodyAsString(), JsonNode.class);
+//                log.error(error.toString());
+//                throw new IllegalArgumentException("Failed to access Hotbit");
+//            } catch (IOException mappingExp) {
+//                log.error(mappingExp.getMessage());
+//                throw new IllegalArgumentException("Failed to access Hotbit");
+//            }
+//        } catch (Exception exp) {
+//            log.error(exp.getMessage());
+//            throw new IllegalArgumentException("Failed to access Hotbit");
+//        }
+//        return hotbitPeriodDto;
+//    }
 
 }

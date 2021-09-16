@@ -1,7 +1,5 @@
 package com.viaje.market.service;
 
-import com.viaje.market.dto.coinsbit_balance.CoinsbitBalanceDto;
-import com.viaje.market.dto.hotbit_balance.HotbitBalanceDto;
 import com.viaje.market.dto.hotbit_market.HotbitPeriodDto;
 import com.viaje.market.dto.hotbit_market.HotbitTodayDto;
 import com.viaje.market.dto.hotbit_order.HotbitOrderResponseDto;
@@ -10,6 +8,7 @@ import com.viaje.market.dto.hotbit_order.OrderRequestDto;
 import com.viaje.market.dto.hotbit_order.OrderResponseDto;
 import com.viaje.market.dto.hotbit_status.HotbitSuccessResponseDto;
 import com.viaje.market.dto.response.BalanceResponseDto;
+import com.viaje.market.dto.response.MarketResponse;
 import com.viaje.market.entity.OrderEntity;
 import com.viaje.market.repository.OrderRepository;
 import com.viaje.market.api_key.ApiKeyConfiguration;
@@ -55,11 +54,14 @@ public class MarketServiceImpl implements MarketService {
     }
 
     @Override
-    public HotbitTodayDto getMarketStatusToday(Integer exchange, String signature) {
+    public MarketResponse getMarketStatusToday(Integer exchange, String signature) {
 //        String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&exchange=" + exchange;
 //        signatureService.isValidSignature(payload, signature);
         if (Objects.equals(exchange, ConstantValue.EXCHANGE_HOTBIT)) {
-            return hotbitService.getMarketStatusToday();
+            return hotbitService.getMarketStatusToday().toResponse();
+        }
+        if (Objects.equals(exchange, ConstantValue.EXCHANGE_COINSBIT)) {
+            return coinsbitService.getMarketStatusToday().toResponse();
         } else {
             throw new IllegalArgumentException("Exchange Not Found");
         }

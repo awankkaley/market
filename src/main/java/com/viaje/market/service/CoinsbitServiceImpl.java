@@ -56,7 +56,7 @@ public class CoinsbitServiceImpl implements CoinsbitService {
             ResponseEntity<String> response = restTemplate.postForEntity(fullUrl, entity, String.class);
             ObjectMapper om = new ObjectMapper();
             coinsbitBalanceDto = om.readValue(response.getBody(), CoinsbitBalanceDto.class);
-            log.error("--RESPONSE---"+coinsbitBalanceDto);
+            log.error("--RESPONSE---" + coinsbitBalanceDto);
         } catch (HttpClientErrorException e) {
             try {
                 JsonNode error = new ObjectMapper().readValue(e.getResponseBodyAsString(), JsonNode.class);
@@ -84,7 +84,7 @@ public class CoinsbitServiceImpl implements CoinsbitService {
             JSONObject json = new JSONObject();
             json.put("request", request);
             json.put("nonce", timestamp.getTime());
-            json.put("market", "USDT_BSI");
+            json.put("market", "BSI_USDT");
             CoinsbitSignature coinsbitSignature = SignatureUtil.GenerateSignatureCoinsbit(json.toJSONString(), coinsbitConfiguration);
             HttpHeaders headers = new HttpHeaders();
             headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
@@ -95,6 +95,7 @@ public class CoinsbitServiceImpl implements CoinsbitService {
             ResponseEntity<String> response = restTemplate.postForEntity(fullUrl, entity, String.class);
             ObjectMapper om = new ObjectMapper();
             coinsbitMarketDto = om.readValue(response.getBody(), CoinsbitMarketDto.class);
+            log.error("----RESPONSE---" + coinsbitMarketDto);
         } catch (HttpClientErrorException e) {
             try {
                 JsonNode error = new ObjectMapper().readValue(e.getResponseBodyAsString(), JsonNode.class);

@@ -1,7 +1,9 @@
 package com.viaje.market.dto.coinsbit_market;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public @Data class CoinsbitMarketResultDto {
 	private String volume;
 	private String deal;

@@ -14,7 +14,6 @@ public interface HotbitService {
 
     HotbitPeriodDto getMarketStatusByPeriode(Integer periode);
 
-    HotbitBookDto getListOfTransaction(Integer side, Integer offset, String limit);
 
     HotbitOrderResponseDto postOrder(Integer side, Double amount, Double price, Integer isfee);
 

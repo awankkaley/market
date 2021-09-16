@@ -12,6 +12,7 @@ import com.viaje.market.dto.hotbit_order.OrderMultipleRequestDto;
 import com.viaje.market.dto.hotbit_order.OrderRequestDto;
 import com.viaje.market.dto.hotbit_order.OrderResponseDto;
 import com.viaje.market.dto.response.BalanceResponseDto;
+import com.viaje.market.dto.response.MarketResponse;
 import com.viaje.market.service.MarketService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,11 +40,11 @@ public class MarketController {
     }
 
     @GetMapping("/market/today/{exchangeCode}")
-    public GlobalDto<HotbitTodayResultDto> marketToday(@Valid @PathVariable Integer exchangeCode, @RequestHeader("sign") String signature) {
-        HotbitTodayDto result = marketService.getMarketStatusToday(exchangeCode, signature);
+    public GlobalDto<MarketResponse> marketToday(@Valid @PathVariable Integer exchangeCode, @RequestHeader("sign") String signature) {
+        MarketResponse result = marketService.getMarketStatusToday(exchangeCode, signature);
         return new GlobalDto<>(
-                result.getError(),
-                result.getResult()
+                null,
+                result
         );
     }
 
