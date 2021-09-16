@@ -21,8 +21,6 @@ public class OrderRequestDto {
     @NotBlank(message = "Please provide a amount")
     private Double amount;
 
-    @NotBlank(message = "Please provide a isFee")
-    private Integer isfee;
 
     public OrderEntity toOrderEntity(Integer exchangeCode,Double price) {
         return OrderEntity.builder()
@@ -30,7 +28,6 @@ public class OrderRequestDto {
                 .amount(amount)
                 .currentPrice(price)
                 .side(side)
-                .isFee(isfee)
                 .status(0)
                 .build();
     }

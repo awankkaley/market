@@ -23,8 +23,6 @@ public class OrderResponseDto {
 
     private Double price;
 
-    private Integer isFee;
-
     private Integer status;
 
     private String info;

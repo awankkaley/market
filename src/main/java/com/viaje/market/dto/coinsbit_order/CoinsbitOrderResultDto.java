@@ -6,7 +6,7 @@ public @Data class CoinsbitOrderResultDto {
 	private String side;
 	private String amount;
 	private String takerFee;
-	private int orderId;
+	private long orderId;
 	private String dealStock;
 	private String dealFee;
 	private String type;

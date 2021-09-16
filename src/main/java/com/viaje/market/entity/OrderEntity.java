@@ -33,8 +33,6 @@ public class OrderEntity extends BaseTimeEntity {
 
     private Double price;
 
-    private Integer isFee;
-
     private Integer status;
 
     private String info;
@@ -51,7 +49,6 @@ public class OrderEntity extends BaseTimeEntity {
                 ", amount=" + amount +
                 ", currentPrice=" + currentPrice +
                 ", price=" + price +
-                ", isFee=" + isFee +
                 ", status=" + status +
                 ", info='" + info + '\'' +
                 ", isValid=" + isValid +
@@ -61,7 +58,7 @@ public class OrderEntity extends BaseTimeEntity {
     public GlobalExchangeResponse toDto(HotbitErrorDto error) {
         return GlobalExchangeResponse.builder()
                 .error(error)
-                .result(new OrderResponseDto(id, exchangeOrderId, exchangeCode, side, amount, currentPrice, price, isFee, status, info, isValid))
+                .result(new OrderResponseDto(id, exchangeOrderId, exchangeCode, side, amount, currentPrice, price, status, info, isValid))
                 .build();
     }
 
@@ -74,7 +71,6 @@ public class OrderEntity extends BaseTimeEntity {
                 .amount(amount)
                 .currentPrice(currentPrice)
                 .price(price)
-                .isFee(isFee)
                 .status(status)
                 .info(info)
                 .isValid(isValid)

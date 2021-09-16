@@ -21,9 +21,6 @@ public class OrderMultipleRequestDto {
     @NotBlank(message = "Please provide a buy ratio")
     private Integer buyPercent;
 
-    @NotBlank(message = "Please provide a isFee")
-    private Integer isfee;
-
 
     public OrderEntity toOrderEntity(Integer exchangeCode, Double price, Integer side, Double amount) {
         return OrderEntity.builder()
@@ -32,7 +29,6 @@ public class OrderMultipleRequestDto {
                 .amount(amount)
                 .currentPrice(price)
                 .side(side)
-                .isFee(isfee)
                 .status(0)
                 .build();
     }

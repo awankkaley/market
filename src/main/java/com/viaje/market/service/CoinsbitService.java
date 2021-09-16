@@ -11,7 +11,7 @@ public interface CoinsbitService {
 
     CoinsbitMarketDto getMarketStatusToday();
 
-    CoinsbitOrderDto postOrder(Integer side, Double amount, Double price, Integer isfee);
+    CoinsbitOrderDto postOrder(Integer side, Double amount, Double price);
 
     CoinsbitOrderDto cancelOrder(Long orderId);
 

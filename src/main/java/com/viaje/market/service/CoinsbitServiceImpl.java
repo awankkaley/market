@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -56,7 +57,6 @@ public class CoinsbitServiceImpl implements CoinsbitService {
             ResponseEntity<String> response = restTemplate.postForEntity(fullUrl, entity, String.class);
             ObjectMapper om = new ObjectMapper();
             coinsbitBalanceDto = om.readValue(response.getBody(), CoinsbitBalanceDto.class);
-            log.error("--RESPONSE---" + coinsbitBalanceDto);
         } catch (HttpClientErrorException e) {
             try {
                 JsonNode error = new ObjectMapper().readValue(e.getResponseBodyAsString(), JsonNode.class);
@@ -115,7 +115,7 @@ public class CoinsbitServiceImpl implements CoinsbitService {
 
 
     @Override
-    public CoinsbitOrderDto postOrder(Integer side, Double amount, Double price, Integer isfee) {
+    public CoinsbitOrderDto postOrder(Integer side, Double amount, Double price) {
         CoinsbitOrderDto coinsbitOrderDto = null;
         String request = "/api/v1/order/new";
         String fullUrl = ConstantValue.BASE_URL + request;
@@ -128,7 +128,7 @@ public class CoinsbitServiceImpl implements CoinsbitService {
             JSONObject json = new JSONObject();
             json.put("request", request);
             json.put("nonce", timestamp.getTime());
-            json.put("market", "USDT_BSI");
+            json.put("market", "BSI_USDT");
             json.put("side", stringSide);
             json.put("amount", amount.toString());
             json.put("price", price.toString());
@@ -141,20 +141,22 @@ public class CoinsbitServiceImpl implements CoinsbitService {
             HttpEntity<Map<String, Object>> entity = new HttpEntity<>(json, headers);
             ResponseEntity<String> response = restTemplate.postForEntity(fullUrl, entity, String.class);
             ObjectMapper om = new ObjectMapper();
-            coinsbitOrderDto = om.readValue(response.getBody(), CoinsbitOrderDto.class);
+            String cleanResponse = Objects.requireNonNull(response.getBody()).replace("[[", "").replace("]]", "").replace("[]", "null");
+            log.error("--RESPONSE-- : " + cleanResponse);
+            coinsbitOrderDto = om.readValue(cleanResponse, CoinsbitOrderDto.class);
+
         } catch (HttpClientErrorException e) {
             try {
                 JsonNode error = new ObjectMapper().readValue(e.getResponseBodyAsString(), JsonNode.class);
                 log.error(error.toString());
-                throw new IllegalArgumentException("Failed to Access Coinsbit");
+                return null;
             } catch (IOException mappingExp) {
                 log.error(mappingExp.getMessage());
-                throw new IllegalArgumentException("Failed to Access Coinsbit");
+                return null;
             }
         } catch (Exception exp) {
             log.error(exp.getMessage());
-            throw new IllegalArgumentException("Failed to Access Coinsbit");
-
+            return null;
         }
         return coinsbitOrderDto;
     }
@@ -169,7 +171,7 @@ public class CoinsbitServiceImpl implements CoinsbitService {
             JSONObject json = new JSONObject();
             json.put("request", request);
             json.put("nonce", timestamp.getTime());
-            json.put("market", "USDT_BSI");
+            json.put("market", "BSI_USDT");
             json.put("orderId", orderId);
             CoinsbitSignature coinsbitSignature = SignatureUtil.GenerateSignatureCoinsbit(json.toJSONString(), coinsbitConfiguration);
             HttpHeaders headers = new HttpHeaders();

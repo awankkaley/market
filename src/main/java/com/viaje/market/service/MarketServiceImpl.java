@@ -1,5 +1,8 @@
 package com.viaje.market.service;
 
+import com.viaje.market.dto.coinsbit_market.CoinsbitMarketDto;
+import com.viaje.market.dto.coinsbit_order.CoinsbitOrderDto;
+import com.viaje.market.dto.coinsbit_status.CoinsbitStatusDto;
 import com.viaje.market.dto.hotbit_market.HotbitPeriodDto;
 import com.viaje.market.dto.hotbit_market.HotbitTodayDto;
 import com.viaje.market.dto.hotbit_order.HotbitOrderResponseDto;
@@ -83,39 +86,11 @@ public class MarketServiceImpl implements MarketService {
     public GlobalExchangeResponse postOrder(Integer exchange, OrderRequestDto orderRequestDto, String signature) {
 //        String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&exchange=" + exchange + "&side=" + orderRequestDto.getSide() + "&amount=" + orderRequestDto.getAmount().toString() + "&isfee=" + orderRequestDto.getIsfee();
 //        signatureService.isValidSignature(payload, signature);
-        HotbitTodayDto market = hotbitService.getMarketStatusToday();
-        double marketPrice = Double.parseDouble(market.getResult().getLast());
-        // TODO: 10/09/21 for testing only
-//        if (orderRequestDto.getSide() == 1) {
-//            marketPrice = marketPrice + 0.1000;
-//        }
-//        if (orderRequestDto.getSide() == 2) {
-//            marketPrice = marketPrice - 0.1000;
-//        }
-        //<<<FOR TESTING ONLY
-        OrderEntity order = orderRepository.save(orderRequestDto.toOrderEntity(exchange, marketPrice));
         if (Objects.equals(exchange, ConstantValue.EXCHANGE_HOTBIT)) {
-            HotbitOrderResponseDto result = hotbitService.postOrder(orderRequestDto.getSide(), orderRequestDto.getAmount(), marketPrice, orderRequestDto.getIsfee());
-            if (result != null && result.getError() == null) {
-                order.setStatus(ConstantValue.CREATED);
-                order.setValid(true);
-                order.setExchangeOrderId(result.getResult().getId());
-                order.setAmount(Double.valueOf(result.getResult().getAmount()));
-                order.setPrice(Double.valueOf(result.getResult().getPrice()));
-                OrderEntity result2 = orderRepository.save(order);
-                return result2.toDto(null);
-            } else {
-                HotbitErrorDto error = new HotbitErrorDto(9031, "failed to access hotbit");
-                order.setStatus(ConstantValue.FAILED);
-                if (result != null) {
-                    error.setCode(result.getError().getCode());
-                    error.setMessage(result.getError().getMessage());
-                }
-                order.setInfo(error.getMessage());
-                order.setValid(true);
-                orderRepository.save(order);
-                throw new IllegalArgumentException(error.getMessage());
-            }
+            return orderHotbit(orderRequestDto);
+        }
+        if (Objects.equals(exchange, ConstantValue.EXCHANGE_COINSBIT)) {
+            return orderCoinsbit(orderRequestDto);
         } else {
             throw new IllegalArgumentException("Exchange Not Found");
         }
@@ -131,8 +106,8 @@ public class MarketServiceImpl implements MarketService {
         OrderEntity orderBuy = orderRepository.save(orderRequestDto.toOrderEntity(exchange, marketPrice, ConstantValue.SIDE_BUY, Util.getAmountBuyFromPercentage(orderRequestDto.getBuyPercent(), orderRequestDto.getAmount())));
         OrderEntity orderSell = orderRepository.save(orderRequestDto.toOrderEntity(exchange, marketPrice, ConstantValue.SIDE_SELL, Util.getAmountSellFromPercentage(orderRequestDto.getBuyPercent(), orderRequestDto.getAmount())));
         if (Objects.equals(exchange, ConstantValue.EXCHANGE_HOTBIT)) {
-            HotbitOrderResponseDto resultBuy = hotbitService.postOrder(ConstantValue.SIDE_BUY, Util.getAmountBuyFromPercentage(orderRequestDto.getBuyPercent(), orderRequestDto.getAmount()), marketPrice, orderRequestDto.getIsfee());
-            HotbitOrderResponseDto resultSell = hotbitService.postOrder(ConstantValue.SIDE_SELL, Util.getAmountSellFromPercentage(orderRequestDto.getBuyPercent(), orderRequestDto.getAmount()), marketPrice, orderRequestDto.getIsfee());
+            HotbitOrderResponseDto resultBuy = hotbitService.postOrder(ConstantValue.SIDE_BUY, Util.getAmountBuyFromPercentage(orderRequestDto.getBuyPercent(), orderRequestDto.getAmount()), marketPrice);
+            HotbitOrderResponseDto resultSell = hotbitService.postOrder(ConstantValue.SIDE_SELL, Util.getAmountSellFromPercentage(orderRequestDto.getBuyPercent(), orderRequestDto.getAmount()), marketPrice);
             if (resultBuy == null) {
                 orderBuy = updateStatusCreated(orderBuy);
             } else {
@@ -213,11 +188,21 @@ public class MarketServiceImpl implements MarketService {
         List<OrderEntity> order = orderRepository.findByStatusAndIsValid(1, true);
         if (order.size() != 0) {
             for (OrderEntity orderEntity : order) {
-                HotbitSuccessResponseDto hotbitSuccessResponseDto = hotbitService.checkSuccessStatus(orderEntity.getExchangeOrderId());
-                log.error("STATUS PERIODIC : " + hotbitSuccessResponseDto.getResult().getRecords());
-                if (!hotbitSuccessResponseDto.getResult().getRecords().isEmpty()) {
-                    orderEntity.setStatus(ConstantValue.SUCCESS);
-                    orderRepository.save(orderEntity);
+                if (Objects.equals(orderEntity.getExchangeCode(), ConstantValue.EXCHANGE_HOTBIT)) {
+                    HotbitSuccessResponseDto hotbitSuccessResponseDto = hotbitService.checkSuccessStatus(orderEntity.getExchangeOrderId());
+                    log.error("STATUS PERIODIC : " + hotbitSuccessResponseDto.getResult().getRecords());
+                    if (!hotbitSuccessResponseDto.getResult().getRecords().isEmpty()) {
+                        orderEntity.setStatus(ConstantValue.SUCCESS);
+                        orderRepository.save(orderEntity);
+                    }
+                }
+                if (Objects.equals(orderEntity.getExchangeCode(), ConstantValue.EXCHANGE_COINSBIT)) {
+                    CoinsbitStatusDto coinsbitStatusDto = coinsbitService.checkSuccessStatus(orderEntity.getExchangeOrderId());
+                    log.error("STATUS PERIODIC : " + coinsbitStatusDto.getResult().getRecords());
+                    if (!coinsbitStatusDto.getResult().getRecords().isEmpty()) {
+                        orderEntity.setStatus(ConstantValue.SUCCESS);
+                        orderRepository.save(orderEntity);
+                    }
                 }
             }
         } else {
@@ -241,5 +226,75 @@ public class MarketServiceImpl implements MarketService {
         order.setStatus(ConstantValue.CREATED);
         order.setValid(false);
         return orderRepository.save(order);
+    }
+
+    private GlobalExchangeResponse orderHotbit(OrderRequestDto orderRequestDto) {
+        HotbitTodayDto market = hotbitService.getMarketStatusToday();
+        double marketPrice = Double.parseDouble(market.getResult().getLast());
+        // TODO: 10/09/21 for testing only
+//        if (orderRequestDto.getSide() == 1) {
+//            marketPrice = marketPrice + 0.1000;
+//        }
+//        if (orderRequestDto.getSide() == 2) {
+//            marketPrice = marketPrice - 0.1000;
+//        }
+        //<<<FOR TESTING ONLY
+        OrderEntity order = orderRepository.save(orderRequestDto.toOrderEntity(1, marketPrice));
+        HotbitOrderResponseDto result = hotbitService.postOrder(orderRequestDto.getSide(), orderRequestDto.getAmount(), marketPrice);
+        if (result != null && result.getError() == null) {
+            order.setStatus(ConstantValue.CREATED);
+            order.setValid(true);
+            order.setExchangeOrderId(result.getResult().getId());
+            order.setAmount(Double.valueOf(result.getResult().getAmount()));
+            order.setPrice(Double.valueOf(result.getResult().getPrice()));
+            OrderEntity result2 = orderRepository.save(order);
+            return result2.toDto(null);
+        } else {
+            HotbitErrorDto error = new HotbitErrorDto(9031, "failed to access hotbit");
+            order.setStatus(ConstantValue.FAILED);
+            if (result != null) {
+                error.setCode(result.getError().getCode());
+                error.setMessage(result.getError().getMessage());
+            }
+            order.setInfo(error.getMessage());
+            order.setValid(true);
+            orderRepository.save(order);
+            throw new IllegalArgumentException(error.getMessage());
+        }
+    }
+
+    private GlobalExchangeResponse orderCoinsbit(OrderRequestDto orderRequestDto) {
+        CoinsbitMarketDto market = coinsbitService.getMarketStatusToday();
+        double marketPrice = Double.parseDouble(market.getResult().getLast());
+        // TODO: 10/09/21 for testing only
+//        if (orderRequestDto.getSide() == 1) {
+//            marketPrice = marketPrice + 0.1000;
+//        }
+//        if (orderRequestDto.getSide() == 2) {
+//            marketPrice = marketPrice - 0.1000;
+//        }
+        //<<<FOR TESTING ONLY
+        OrderEntity order = orderRepository.save(orderRequestDto.toOrderEntity(2, marketPrice));
+        CoinsbitOrderDto result = coinsbitService.postOrder(orderRequestDto.getSide(), orderRequestDto.getAmount(), marketPrice);
+        if (result != null && result.isSuccess()) {
+            order.setStatus(ConstantValue.CREATED);
+            order.setValid(true);
+            order.setExchangeOrderId(result.getResult().getOrderId());
+            order.setAmount(Double.valueOf(result.getResult().getAmount()));
+            order.setPrice(Double.valueOf(result.getResult().getPrice()));
+            OrderEntity result2 = orderRepository.save(order);
+            return result2.toDto(null);
+        } else {
+            HotbitErrorDto error = new HotbitErrorDto(9031, "failed to access coinsbit");
+            order.setStatus(ConstantValue.FAILED);
+            if (result != null) {
+                error.setCode(9031);
+                error.setMessage(result.getMessage());
+            }
+            order.setInfo(error.getMessage());
+            order.setValid(true);
+            orderRepository.save(order);
+            throw new IllegalArgumentException(error.getMessage());
+        }
     }
 }

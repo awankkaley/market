@@ -117,17 +117,17 @@ public class HotbitServiceImpl implements HotbitService {
 
 
     @Override
-    public HotbitOrderResponseDto postOrder(Integer side, Double amount, Double price, Integer isfee) {
+    public HotbitOrderResponseDto postOrder(Integer side, Double amount, Double price) {
         HotbitOrderResponseDto hotbitOrderResponseDto = null;
         try {
-            String data = "amount=" + amount + "&api_key=" + hotbitConfiguration.getKey() + "&isfee=" + isfee + "&market=BSI/USDT&price=" + price + "&side=" + side;
+            String data = "amount=" + amount + "&api_key=" + hotbitConfiguration.getKey() + "&isfee=" + 0 + "&market=BSI/USDT&price=" + price + "&side=" + side;
             String sign = SignatureUtil.GenerateSignatureHotbit(data, hotbitConfiguration);
             UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString("https://api.hotbit.io/v2/p2/order.put_limit")
                     .queryParam("api_key", hotbitConfiguration.getKey())
                     .queryParam("side", side)
                     .queryParam("amount", amount)
                     .queryParam("price", price)
-                    .queryParam("isfee", isfee)
+                    .queryParam("isfee", 0)
                     .queryParam("sign", sign)
                     .queryParam("market", "BSI/USDT");
             String response = restTemplate.getForObject(uriBuilder.toUriString(), String.class);
