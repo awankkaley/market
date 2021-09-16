@@ -134,20 +134,10 @@ public class MarketServiceImpl implements MarketService {
                 () -> new IllegalArgumentException("Data Not Found")
         );
         if (Objects.equals(exchange, ConstantValue.EXCHANGE_HOTBIT)) {
-            HotbitSuccessResponseDto hotbitSuccessResponseDto = hotbitService.checkSuccessStatus(order.getExchangeOrderId());
-            if (hotbitSuccessResponseDto.getResult().getRecords().isEmpty()) {
-                HotbitOrderResponseDto result = hotbitService.cancelOrder(order.getExchangeOrderId());
-                if (result.getError() == null) {
-                    order.setStatus(ConstantValue.FAILED);
-                    order.setInfo("Cancel by Viaje");
-                    order.setValid(true);
-                }
-                OrderEntity result2 = orderRepository.save(order);
-                return result2.toDto(result.getError());
-            } else {
-                throw new IllegalArgumentException("Transaction has been settled");
-            }
-
+            return cancelOrderHotsbit(order);
+        }
+        if (Objects.equals(exchange, ConstantValue.EXCHANGE_COINSBIT)) {
+            return cancelOrderCoinsbit(order);
         } else {
             throw new IllegalArgumentException("Exchange Not Found");
         }
@@ -295,6 +285,38 @@ public class MarketServiceImpl implements MarketService {
             order.setValid(true);
             orderRepository.save(order);
             throw new IllegalArgumentException(error.getMessage());
+        }
+    }
+
+    private GlobalExchangeResponse cancelOrderHotsbit(OrderEntity order) {
+        HotbitSuccessResponseDto hotbitSuccessResponseDto = hotbitService.checkSuccessStatus(order.getExchangeOrderId());
+        if (hotbitSuccessResponseDto.getResult().getRecords().isEmpty()) {
+            HotbitOrderResponseDto result = hotbitService.cancelOrder(order.getExchangeOrderId());
+            if (result.getError() == null) {
+                order.setStatus(ConstantValue.FAILED);
+                order.setInfo("Cancel by Viaje");
+                order.setValid(true);
+            }
+            OrderEntity result2 = orderRepository.save(order);
+            return result2.toDto(result.getError());
+        } else {
+            throw new IllegalArgumentException("Transaction has been settled");
+        }
+    }
+
+    private GlobalExchangeResponse cancelOrderCoinsbit(OrderEntity order) {
+        CoinsbitStatusDto coinsbitStatusDto = coinsbitService.checkSuccessStatus(order.getExchangeOrderId());
+        if (coinsbitStatusDto.getResult().getRecords().isEmpty()) {
+            CoinsbitOrderDto result = coinsbitService.cancelOrder(order.getExchangeOrderId());
+            if (result.isSuccess()) {
+                order.setStatus(ConstantValue.FAILED);
+                order.setInfo("Cancel by Viaje");
+                order.setValid(true);
+            }
+            OrderEntity result2 = orderRepository.save(order);
+            return result2.toDto(null);
+        } else {
+            throw new IllegalArgumentException("Transaction has been settled");
         }
     }
 }
