@@ -1,6 +1,7 @@
-package com.viaje.market.dto;
+package com.viaje.market.dto.hotbit_order;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.viaje.market.dto.HotbitErrorDto;
 import lombok.Data;
 
 @Data

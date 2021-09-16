@@ -2,11 +2,18 @@ package com.viaje.market.service;
 
 
 import com.viaje.market.dto.*;
+import com.viaje.market.dto.hotbit_balance.HotbitBalanceDto;
+import com.viaje.market.dto.hotbit_market.HotbitPeriodDto;
+import com.viaje.market.dto.hotbit_market.HotbitTodayDto;
+import com.viaje.market.dto.hotbit_order.OrderMultipleRequestDto;
+import com.viaje.market.dto.hotbit_order.OrderRequestDto;
+import com.viaje.market.dto.hotbit_order.OrderResponseDto;
+import com.viaje.market.dto.response.BalanceResponseDto;
 
 import java.util.List;
 
 public interface MarketService {
-    HotbitBalanceDto getBalance(Integer exchange, String signature);
+    BalanceResponseDto getBalance(Integer exchange, String signature);
 
     HotbitTodayDto getMarketStatusToday(Integer exchange, String signature);
 

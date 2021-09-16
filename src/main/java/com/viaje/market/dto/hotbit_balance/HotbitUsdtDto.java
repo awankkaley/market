@@ -1,10 +1,10 @@
-package com.viaje.market.dto;
+package com.viaje.market.dto.hotbit_balance;
 
 import lombok.Data;
 
 @Data
-public class HotbitBsiDto {
+public class HotbitUsdtDto {
     private String available;
+
     private String freeze;
 }
-

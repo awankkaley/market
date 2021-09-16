@@ -1,4 +1,4 @@
-package com.viaje.market.dto;
+package com.viaje.market.dto.hotbit_balance;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

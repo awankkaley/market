@@ -1,4 +1,4 @@
-package com.viaje.market.dto;
+package com.viaje.market.dto.hotbit_market;
 
 import lombok.Data;
 

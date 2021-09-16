@@ -2,6 +2,16 @@ package com.viaje.market.controller;
 
 import com.viaje.market.base_dto.GlobalDto;
 import com.viaje.market.dto.*;
+import com.viaje.market.dto.hotbit_balance.HotbitBalanceDto;
+import com.viaje.market.dto.hotbit_balance.HotbitBalanceResultDto;
+import com.viaje.market.dto.hotbit_market.HotbitPeriodDto;
+import com.viaje.market.dto.hotbit_market.HotbitPeriodResultDto;
+import com.viaje.market.dto.hotbit_market.HotbitTodayDto;
+import com.viaje.market.dto.hotbit_market.HotbitTodayResultDto;
+import com.viaje.market.dto.hotbit_order.OrderMultipleRequestDto;
+import com.viaje.market.dto.hotbit_order.OrderRequestDto;
+import com.viaje.market.dto.hotbit_order.OrderResponseDto;
+import com.viaje.market.dto.response.BalanceResponseDto;
 import com.viaje.market.service.MarketService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,11 +30,11 @@ public class MarketController {
 
 
     @GetMapping("/balance/{exchangeCode}")
-    public GlobalDto<HotbitBalanceResultDto> balance(@Valid @PathVariable Integer exchangeCode, @RequestHeader("sign") String signature) {
-        HotbitBalanceDto result = marketService.getBalance(exchangeCode, signature);
+    public GlobalDto<BalanceResponseDto> balance(@Valid @PathVariable Integer exchangeCode, @RequestHeader("sign") String signature) {
+        BalanceResponseDto result = marketService.getBalance(exchangeCode, signature);
         return new GlobalDto<>(
-                result.getError(),
-                result.getResult()
+                null,
+                result
         );
     }
 

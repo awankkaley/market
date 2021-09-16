@@ -1,5 +1,15 @@
 package com.viaje.market.service;
 
+import com.viaje.market.dto.coinsbit_balance.CoinsbitBalanceDto;
+import com.viaje.market.dto.hotbit_balance.HotbitBalanceDto;
+import com.viaje.market.dto.hotbit_market.HotbitPeriodDto;
+import com.viaje.market.dto.hotbit_market.HotbitTodayDto;
+import com.viaje.market.dto.hotbit_order.HotbitOrderResponseDto;
+import com.viaje.market.dto.hotbit_order.OrderMultipleRequestDto;
+import com.viaje.market.dto.hotbit_order.OrderRequestDto;
+import com.viaje.market.dto.hotbit_order.OrderResponseDto;
+import com.viaje.market.dto.hotbit_status.HotbitSuccessResponseDto;
+import com.viaje.market.dto.response.BalanceResponseDto;
 import com.viaje.market.entity.OrderEntity;
 import com.viaje.market.repository.OrderRepository;
 import com.viaje.market.api_key.ApiKeyConfiguration;
@@ -15,10 +25,8 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,15 +41,14 @@ public class MarketServiceImpl implements MarketService {
     private final ApiKeyConfiguration apiKeyConfiguration;
 
     @Override
-    public HotbitBalanceDto getBalance(Integer exchange, String signature) {
+    public BalanceResponseDto getBalance(Integer exchange, String signature) {
 //        String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&exchange=" + exchange;
 //        signatureService.isValidSignature(payload, signature);
         if (Objects.equals(exchange, ConstantValue.EXCHANGE_HOTBIT)) {
-            return hotbitService.getBalance();
+            return hotbitService.getBalance().toResponse();
         }
         if (Objects.equals(exchange, ConstantValue.EXCHANGE_COINSBIT)) {
-            coinsbitService.getBalance();
-            return null;
+            return coinsbitService.getBalance().toResponse();
         } else {
             throw new IllegalArgumentException("Exchange Not Found");
         }

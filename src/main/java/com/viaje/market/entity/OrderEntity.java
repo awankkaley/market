@@ -1,10 +1,9 @@
 package com.viaje.market.entity;
 
 import com.viaje.market.base_dto.BaseTimeEntity;
-import com.viaje.market.dto.GlobaExchangeMultipleResponse;
 import com.viaje.market.dto.GlobalExchangeResponse;
 import com.viaje.market.dto.HotbitErrorDto;
-import com.viaje.market.dto.OrderResponseDto;
+import com.viaje.market.dto.hotbit_order.OrderResponseDto;
 import lombok.*;
 
 import javax.persistence.*;

@@ -1,4 +1,4 @@
-package com.viaje.market.dto;
+package com.viaje.market.dto.hotbit_order;
 
 import com.viaje.market.entity.OrderEntity;
 import com.viaje.market.util.Util;
