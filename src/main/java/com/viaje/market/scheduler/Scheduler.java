@@ -17,9 +17,15 @@ public class Scheduler {
         this.marketService = marketService;
     }
 
-    @Scheduled(cron = "0 * * * * *")
-    public void cronJobCheckStatus(){
+    @Scheduled(fixedDelay = 60000)
+    public void cronJobCheckStatus() {
         log.info("-------schedule running-------");
         marketService.checkStatusPeriodically();
+    }
+
+    @Scheduled(fixedDelay = 60000*60)
+    public void cronJobPendingOrder() {
+        log.info("-------pending schedule running-------");
+        marketService.createPendingOrder();
     }
 }

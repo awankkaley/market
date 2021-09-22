@@ -1,6 +1,5 @@
 package com.viaje.market.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.viaje.market.dto.coinsbit_market.CoinsbitMarketDto;
 import com.viaje.market.dto.coinsbit_order.CoinsbitOrderDto;
 import com.viaje.market.dto.coinsbit_order.CoinsbitOrderResultDto;
@@ -204,7 +203,41 @@ public class MarketServiceImpl implements MarketService {
                 }
             }
         } else {
-            log.error("STATUS PERIODIC EMPTY");
+            log.error("EMPTY DATA");
+        }
+    }
+
+    @Async
+    @Override
+    public void createPendingOrder() {
+        List<OrderEntity> order = orderRepository.findByStatusAndIsValid(1, false);
+        if (order.size() != 0) {
+            for (OrderEntity orderEntity : order) {
+                if (Objects.equals(orderEntity.getExchangeCode(), ConstantValue.EXCHANGE_HOTBIT)) {
+                    HotbitOrderResponseDto result = hotbitService.postOrder(orderEntity.getSide(), orderEntity.getAmount(), orderEntity.getCurrentPrice());
+                    if (result != null && result.getError() == null) {
+                        orderEntity.setStatus(ConstantValue.CREATED);
+                        orderEntity.setValid(true);
+                        orderEntity.setExchangeOrderId(result.getResult().getId());
+                        orderEntity.setAmount(Double.valueOf(result.getResult().getAmount()));
+                        orderEntity.setPrice(Double.valueOf(result.getResult().getPrice()));
+                        orderRepository.save(orderEntity);
+                    }
+                }
+                if (Objects.equals(orderEntity.getExchangeCode(), ConstantValue.EXCHANGE_COINSBIT)) {
+                    CoinsbitOrderDto result = coinsbitService.postOrder(orderEntity.getSide(), orderEntity.getAmount(), orderEntity.getCurrentPrice());
+                    if (result != null && result.isSuccess()) {
+                        orderEntity.setStatus(ConstantValue.CREATED);
+                        orderEntity.setValid(true);
+                        orderEntity.setExchangeOrderId(result.getResult().getOrderId());
+                        orderEntity.setAmount(Double.valueOf(result.getResult().getAmount()));
+                        orderEntity.setPrice(Double.valueOf(result.getResult().getPrice()));
+                        orderRepository.save(orderEntity);
+                    }
+                }
+            }
+        } else {
+            log.error("EMPTY DATA");
         }
     }
 
@@ -228,7 +261,7 @@ public class MarketServiceImpl implements MarketService {
     }
 
 
-    private OrderEntity updateStatusCreated(OrderEntity order) {
+    private OrderEntity updateStatusPending(OrderEntity order) {
         order.setExchangeOrderId(null);
         order.setStatus(ConstantValue.CREATED);
         order.setValid(false);
@@ -351,12 +384,12 @@ public class MarketServiceImpl implements MarketService {
         HotbitOrderResponseDto resultBuy = hotbitService.postOrder(ConstantValue.SIDE_BUY, Util.getAmountBuyFromPercentage(orderRequestDto.getBuyPercent(), orderRequestDto.getAmount()), marketPrice);
         HotbitOrderResponseDto resultSell = hotbitService.postOrder(ConstantValue.SIDE_SELL, Util.getAmountSellFromPercentage(orderRequestDto.getBuyPercent(), orderRequestDto.getAmount()), marketPrice);
         if (resultBuy == null) {
-            orderBuy = updateStatusCreated(orderBuy);
+            orderBuy = updateStatusPending(orderBuy);
         } else {
             orderBuy = updateStatusSuccess(orderBuy, resultBuy);
         }
         if (resultSell == null) {
-            orderSell = updateStatusCreated(orderSell);
+            orderSell = updateStatusPending(orderSell);
         } else {
             orderSell = updateStatusSuccess(orderSell, resultSell);
         }
@@ -373,12 +406,12 @@ public class MarketServiceImpl implements MarketService {
         CoinsbitOrderDto resultBuy = coinsbitService.postOrder(ConstantValue.SIDE_BUY, Util.getAmountBuyFromPercentage(orderRequestDto.getBuyPercent(), orderRequestDto.getAmount()), marketPrice);
         CoinsbitOrderDto resultSell = coinsbitService.postOrder(ConstantValue.SIDE_SELL, Util.getAmountSellFromPercentage(orderRequestDto.getBuyPercent(), orderRequestDto.getAmount()), marketPrice);
         if (resultBuy == null) {
-            orderBuy = updateStatusCreated(orderBuy);
+            orderBuy = updateStatusPending(orderBuy);
         } else {
             orderBuy = updateStatusSuccessCoinsbit(orderBuy, resultBuy);
         }
         if (resultSell == null) {
-            orderSell = updateStatusCreated(orderSell);
+            orderSell = updateStatusPending(orderSell);
         } else {
             orderSell = updateStatusSuccessCoinsbit(orderSell, resultSell);
         }
