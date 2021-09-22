@@ -18,7 +18,6 @@ import java.sql.Timestamp;
 import java.util.Base64;
 import java.util.Formatter;
 
-import static javax.xml.crypto.dsig.SignatureMethod.HMAC_SHA512;
 
 @Slf4j
 public class SignatureUtil {

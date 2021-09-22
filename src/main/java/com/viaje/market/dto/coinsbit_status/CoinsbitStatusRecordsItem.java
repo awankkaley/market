@@ -9,6 +9,6 @@ public @Data class CoinsbitStatusRecordsItem {
 	private String price;
 	private String fee;
 	private double time;
-	private int id;
-	private int dealOrderId;
+	private long id;
+	private long dealOrderId;
 }

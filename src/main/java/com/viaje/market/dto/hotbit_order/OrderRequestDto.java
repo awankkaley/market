@@ -6,23 +6,23 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @Builder
 public class OrderRequestDto {
-    @NotBlank(message = "Please provide a side")
-    @Size(min = 1, max = 1, message = "Length is 1")
+    @NotNull(message = "Please provide a side")
+    @Min(value = 1, message = "Please input a correct format")
+    @Max(value = 2, message = "Please input a correct format")
     private Integer side;
 
-    @NotBlank(message = "Please provide a amount")
+    @NotNull(message = "Please provide a amount")
     private Double amount;
 
 
-    public OrderEntity toOrderEntity(Integer exchangeCode,Double price) {
+    public OrderEntity toOrderEntity(Integer exchangeCode, Double price) {
         return OrderEntity.builder()
                 .exchangeCode(exchangeCode)
                 .amount(amount)

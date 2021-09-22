@@ -13,6 +13,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.validation.ConstraintViolationException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,9 +30,10 @@ public class ExceptionResolver {
                 .stream()
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .collect(Collectors.toList());
-        GlobalMultipleErrorDto GlobalErrorResponse = new GlobalMultipleErrorDto(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(), errors);
+        GlobalMultipleErrorDto GlobalErrorResponse = new GlobalMultipleErrorDto(9103, HttpStatus.BAD_REQUEST.getReasonPhrase(), errors);
         return new ResponseEntity<>(GlobalErrorResponse, HttpStatus.OK);
     }
+
 
     @ExceptionHandler(value = {AuthenticationException.class})
     public ResponseEntity<GlobalErrorDto> unauthenticatedHandler(AuthenticationException ex) {
@@ -44,6 +46,13 @@ public class ExceptionResolver {
     @ExceptionHandler(value = {IllegalArgumentException.class})
     public ResponseEntity<GlobalErrorDto> globalHandler(IllegalArgumentException ex) {
         GlobalErrorDto globalErrorResponse = new GlobalErrorDto(new BaseError(9102, ex.getMessage()));
+        return new ResponseEntity<>(globalErrorResponse, HttpStatus.OK);
+
+    }
+
+    @ExceptionHandler(value = {ConstraintViolationException.class})
+    public ResponseEntity<GlobalErrorDto> badRequestHandler(ConstraintViolationException ex) {
+        GlobalErrorDto globalErrorResponse = new GlobalErrorDto(new BaseError(9103, ex.getMessage()));
         return new ResponseEntity<>(globalErrorResponse, HttpStatus.OK);
 
     }

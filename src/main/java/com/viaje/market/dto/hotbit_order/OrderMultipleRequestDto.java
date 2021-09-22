@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
@@ -15,10 +16,10 @@ import javax.validation.constraints.NotBlank;
 @Builder
 public class OrderMultipleRequestDto {
 
-    @NotBlank(message = "Please provide a amount")
+    @NotNull(message = "Please provide a amount")
     private Double amount;
 
-    @NotBlank(message = "Please provide a buy ratio")
+    @NotNull(message = "Please provide a buy ratio")
     private Integer buyPercent;
 
 

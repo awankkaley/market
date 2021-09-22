@@ -119,9 +119,12 @@ public class CoinsbitServiceImpl implements CoinsbitService {
         CoinsbitOrderDto coinsbitOrderDto = null;
         String request = "/api/v1/order/new";
         String fullUrl = ConstantValue.BASE_URL + request;
-        String stringSide = "sell";
+        String stringSide = "";
         if (side == 2) {
             stringSide = "buy";
+        }
+        if (side == 1) {
+            stringSide = "sell";
         }
         try {
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -184,7 +187,7 @@ public class CoinsbitServiceImpl implements CoinsbitService {
             HttpEntity<Map<String, Object>> entity = new HttpEntity<>(json, headers);
             ResponseEntity<String> response = restTemplate.postForEntity(fullUrl, entity, String.class);
             ObjectMapper om = new ObjectMapper();
-            coinsbitOrderDto = om.readValue(response.getBody(), CoinsbitOrderDto.class);
+            coinsbitOrderDto = om.readValue(Objects.requireNonNull(response.getBody()).replace("[]", "null"), CoinsbitOrderDto.class);
         } catch (HttpClientErrorException e) {
             try {
                 JsonNode error = new ObjectMapper().readValue(e.getResponseBodyAsString(), JsonNode.class);
@@ -224,7 +227,7 @@ public class CoinsbitServiceImpl implements CoinsbitService {
             HttpEntity<Map<String, Object>> entity = new HttpEntity<>(json, headers);
             ResponseEntity<String> response = restTemplate.postForEntity(fullUrl, entity, String.class);
             ObjectMapper om = new ObjectMapper();
-            coinsbitStatusDto = om.readValue(response.getBody(), CoinsbitStatusDto.class);
+            coinsbitStatusDto = om.readValue(Objects.requireNonNull(response.getBody()).replace("[]", "null"), CoinsbitStatusDto.class);
         } catch (HttpClientErrorException e) {
             try {
                 JsonNode error = new ObjectMapper().readValue(e.getResponseBodyAsString(), JsonNode.class);

@@ -72,7 +72,7 @@ public class MarketServiceImpl implements MarketService {
 
     @Override
     public HotbitPeriodDto getMarketStatusByPeriode(Integer exchange, Integer periode, String signature) {
-//        String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&exchange=" + exchange + "&period=" + periode;
+//        String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&period=" + periode;
 //        signatureService.isValidSignature(payload, signature);
         if (Objects.equals(exchange, ConstantValue.EXCHANGE_HOTBIT)) {
             return hotbitService.getMarketStatusByPeriode(periode);
@@ -99,7 +99,7 @@ public class MarketServiceImpl implements MarketService {
 
     @Override
     public GlobaExchangeMultipleResponse postMultipleOrder(Integer exchange, OrderMultipleRequestDto orderRequestDto, String signature) {
-//        String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&exchange=" + exchange + "&amount=" + orderRequestDto.getAmount().toString() + "&isfee=" + orderRequestDto.getIsfee();
+//        String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&exchange=" + exchange + "&amount=" + orderRequestDto.getAmount().toString();
 //        signatureService.isValidSignature(payload, signature);
         if (Objects.equals(exchange, ConstantValue.EXCHANGE_HOTBIT)) {
             return postMultipleOrderHotbit(orderRequestDto);
@@ -174,10 +174,12 @@ public class MarketServiceImpl implements MarketService {
                 }
                 if (Objects.equals(orderEntity.getExchangeCode(), ConstantValue.EXCHANGE_COINSBIT)) {
                     CoinsbitStatusDto coinsbitStatusDto = coinsbitService.checkSuccessStatus(orderEntity.getExchangeOrderId());
-                    log.error("STATUS PERIODIC : " + coinsbitStatusDto.getResult().getRecords());
-                    if (!coinsbitStatusDto.getResult().getRecords().isEmpty()) {
-                        orderEntity.setStatus(ConstantValue.SUCCESS);
-                        orderRepository.save(orderEntity);
+                    if (coinsbitStatusDto.getResult() != null) {
+                        log.error("STATUS PERIODIC : " + coinsbitStatusDto.getResult().getRecords().toString());
+                        if (!coinsbitStatusDto.getResult().getRecords().isEmpty()) {
+                            orderEntity.setStatus(ConstantValue.SUCCESS);
+                            orderRepository.save(orderEntity);
+                        }
                     }
                 }
             }
@@ -301,18 +303,24 @@ public class MarketServiceImpl implements MarketService {
 
     private GlobalExchangeResponse cancelOrderCoinsbit(OrderEntity order) {
         CoinsbitStatusDto coinsbitStatusDto = coinsbitService.checkSuccessStatus(order.getExchangeOrderId());
-        if (coinsbitStatusDto.getResult().getRecords().isEmpty()) {
-            CoinsbitOrderDto result = coinsbitService.cancelOrder(order.getExchangeOrderId());
-            if (result.isSuccess()) {
-                order.setStatus(ConstantValue.FAILED);
-                order.setInfo("Cancel by Viaje");
-                order.setValid(true);
+
+        if (coinsbitStatusDto.isSuccess()) {
+            if (coinsbitStatusDto.getResult() == null) {
+                CoinsbitOrderDto result = coinsbitService.cancelOrder(order.getExchangeOrderId());
+                if (result.isSuccess()) {
+                    order.setStatus(ConstantValue.FAILED);
+                    order.setInfo("Cancel by Viaje");
+                    order.setValid(true);
+                }
+                OrderEntity result2 = orderRepository.save(order);
+                return result2.toDto(null);
+            } else {
+                throw new IllegalArgumentException("Transaction has been settled");
             }
-            OrderEntity result2 = orderRepository.save(order);
-            return result2.toDto(null);
         } else {
-            throw new IllegalArgumentException("Transaction has been settled");
+            throw new IllegalArgumentException("Failed to Access Coinsbit");
         }
+
     }
 
     private GlobaExchangeMultipleResponse postMultipleOrderHotbit(OrderMultipleRequestDto orderRequestDto) {
