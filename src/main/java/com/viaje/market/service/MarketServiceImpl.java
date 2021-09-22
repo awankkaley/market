@@ -1,18 +1,21 @@
 package com.viaje.market.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.viaje.market.dto.coinsbit_market.CoinsbitMarketDto;
 import com.viaje.market.dto.coinsbit_order.CoinsbitOrderDto;
+import com.viaje.market.dto.coinsbit_order.CoinsbitOrderResultDto;
 import com.viaje.market.dto.coinsbit_status.CoinsbitStatusDto;
 import com.viaje.market.dto.hotbit_market.HotbitPeriodDto;
 import com.viaje.market.dto.hotbit_market.HotbitTodayDto;
-import com.viaje.market.dto.hotbit_order.HotbitOrderResponseDto;
-import com.viaje.market.dto.hotbit_order.OrderMultipleRequestDto;
-import com.viaje.market.dto.hotbit_order.OrderRequestDto;
-import com.viaje.market.dto.hotbit_order.OrderResponseDto;
+import com.viaje.market.dto.hotbit_order.*;
 import com.viaje.market.dto.hotbit_status.HotbitSuccessResponseDto;
 import com.viaje.market.dto.response.BalanceResponseDto;
 import com.viaje.market.dto.response.MarketResponse;
+import com.viaje.market.entity.CoinsbitEntity;
+import com.viaje.market.entity.HotbitEntity;
 import com.viaje.market.entity.OrderEntity;
+import com.viaje.market.repository.CoinbitRepository;
+import com.viaje.market.repository.HotbitRepository;
 import com.viaje.market.repository.OrderRepository;
 import com.viaje.market.api_key.ApiKeyConfiguration;
 import com.viaje.market.dto.*;
@@ -37,7 +40,8 @@ import java.util.stream.Collectors;
 public class MarketServiceImpl implements MarketService {
     private final HotbitService hotbitService;
     private final CoinsbitService coinsbitService;
-
+    private final HotbitRepository hotbitRepository;
+    private final CoinbitRepository coinbitRepository;
     private final SignatureService signatureService;
     private final OrderRepository orderRepository;
     private final ApiKeyConfiguration apiKeyConfiguration;
@@ -157,6 +161,22 @@ public class MarketServiceImpl implements MarketService {
         OrderEntity result = orderRepository.findById(orderId).orElseThrow(() -> new IllegalArgumentException("Data Not Found"));
         return result.toDtoList();
     }
+
+    @Override
+    public Object getDetailOrder(Long orderId, String signature) {
+//        String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&orderId=" + orderId;
+//        signatureService.isValidSignature(payload, signature);
+        OrderEntity order = orderRepository.findById(orderId).orElseThrow(() -> new IllegalArgumentException("Data Not Found"));
+        if (Objects.equals(order.getExchangeCode(), ConstantValue.EXCHANGE_HOTBIT)) {
+            return getDetailOrderHotbit(order.getExchangeOrderId());
+        }
+        if (Objects.equals(order.getExchangeCode(), ConstantValue.EXCHANGE_COINSBIT)) {
+            return getDetailOrderCoinsbit(order.getExchangeOrderId());
+        } else {
+            throw new IllegalArgumentException("Exchange Not Found");
+        }
+    }
+
 
     @Async
     @Override
@@ -365,5 +385,23 @@ public class MarketServiceImpl implements MarketService {
         OrderResponseDto dataBuy = orderBuy.toDtoList();
         OrderResponseDto dataSell = orderSell.toDtoList();
         return new GlobaExchangeMultipleResponse(null, Arrays.asList(dataBuy, dataSell));
+    }
+
+    private CoinsbitOrderResultDto getDetailOrderCoinsbit(Long orderId) {
+        CoinsbitEntity coinsbit = coinbitRepository.findByOrderId(orderId).orElseThrow(() -> new IllegalArgumentException("Detail Order Not Found"));
+        try {
+            return coinsbit.toDto();
+        } catch (Exception ex) {
+            throw new IllegalArgumentException("Something Wrong");
+        }
+    }
+
+    private HotbitOrderResultDto getDetailOrderHotbit(Long orderId) {
+        HotbitEntity hotbit = hotbitRepository.findByOrderId(orderId).orElseThrow(() -> new IllegalArgumentException("Detail Order Not Found"));
+        try {
+            return hotbit.toDto();
+        } catch (Exception ex) {
+            throw new IllegalArgumentException("Something Wrong");
+        }
     }
 }

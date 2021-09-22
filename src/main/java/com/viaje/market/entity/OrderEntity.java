@@ -20,7 +20,6 @@ public class OrderEntity extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
     private Long exchangeOrderId;
 
     private Integer exchangeCode;

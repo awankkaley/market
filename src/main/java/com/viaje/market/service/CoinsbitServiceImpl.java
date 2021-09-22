@@ -8,6 +8,7 @@ import com.viaje.market.dto.coinsbit_balance.CoinsbitBalanceDto;
 import com.viaje.market.dto.coinsbit_market.CoinsbitMarketDto;
 import com.viaje.market.dto.coinsbit_order.CoinsbitOrderDto;
 import com.viaje.market.dto.coinsbit_status.CoinsbitStatusDto;
+import com.viaje.market.repository.CoinbitRepository;
 import com.viaje.market.util.ConstantValue;
 import com.viaje.market.util.SignatureUtil;
 import lombok.AllArgsConstructor;
@@ -33,6 +34,7 @@ import java.util.Objects;
 @AllArgsConstructor
 public class CoinsbitServiceImpl implements CoinsbitService {
     private CoinsbitConfiguration coinsbitConfiguration;
+    private CoinbitRepository coinbitRepository;
 
     @Autowired
     private RestTemplate restTemplate;
@@ -149,6 +151,8 @@ public class CoinsbitServiceImpl implements CoinsbitService {
             coinsbitOrderDto = om.readValue(cleanResponse, CoinsbitOrderDto.class);
             if (!coinsbitOrderDto.isSuccess()) {
                 return null;
+            } else {
+                coinbitRepository.save(coinsbitOrderDto.getResult().toEntity());
             }
         } catch (HttpClientErrorException e) {
             try {

@@ -9,6 +9,7 @@ import com.viaje.market.dto.hotbit_market.HotbitTodayDto;
 import com.viaje.market.dto.hotbit_order.HotbitBookDto;
 import com.viaje.market.dto.hotbit_order.HotbitOrderResponseDto;
 import com.viaje.market.dto.hotbit_status.HotbitSuccessResponseDto;
+import com.viaje.market.repository.HotbitRepository;
 import com.viaje.market.util.SignatureUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +30,8 @@ import java.util.Collections;
 public class HotbitServiceImpl implements HotbitService {
 
     private HotbitConfiguration hotbitConfiguration;
+    private HotbitRepository hotbitRepository;
+
 
     @Autowired
     private RestTemplate restTemplate;
@@ -135,6 +138,8 @@ public class HotbitServiceImpl implements HotbitService {
             hotbitOrderResponseDto = om.readValue(response, HotbitOrderResponseDto.class);
             if (hotbitOrderResponseDto.getError() != null) {
                 return null;
+            }else {
+                hotbitRepository.save(hotbitOrderResponseDto.getResult().toEntity());
             }
         } catch (HttpClientErrorException e) {
             try {

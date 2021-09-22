@@ -63,7 +63,7 @@ public class MarketController {
     }
 
     @PostMapping("/book/order/single/{exchangeCode}")
-    public GlobalDto<OrderResponseDto> order(@PathVariable @Min(1) @Max(5) Integer exchangeCode,@Valid @RequestBody OrderRequestDto orderRequestDto, @RequestHeader("sign") String signature) {
+    public GlobalDto<OrderResponseDto> order(@PathVariable @Min(1) @Max(5) Integer exchangeCode, @Valid @RequestBody OrderRequestDto orderRequestDto, @RequestHeader("sign") String signature) {
         GlobalExchangeResponse result = marketService.postOrder(exchangeCode, orderRequestDto, signature);
         return new GlobalDto<>(
                 result.getError(),
@@ -81,7 +81,7 @@ public class MarketController {
     }
 
     @PostMapping("/book/cancel/{exchangeCode}")
-    public GlobalDto<OrderResponseDto> cancel(@PathVariable @Min(1) @Max(5) Integer exchangeCode,@Valid @RequestBody Map<String, Long> orderId, @RequestHeader("sign") String signature) {
+    public GlobalDto<OrderResponseDto> cancel(@PathVariable @Min(1) @Max(5) Integer exchangeCode, @Valid @RequestBody Map<String, Long> orderId, @RequestHeader("sign") String signature) {
         GlobalExchangeResponse result = marketService.cancelOrder(exchangeCode, orderId.get("orderId"), signature);
         return new GlobalDto<>(result.getError(), result.getResult());
     }
@@ -92,6 +92,7 @@ public class MarketController {
         return new GlobalDto<>(null, result);
     }
 
+
     @GetMapping("/book/by_status/{page}/{limit}/{status}")
     public GlobalDto<List<OrderResponseDto>> getByStatus(@PathVariable @NotNull Integer page, @PathVariable @NotNull Integer limit, @PathVariable @Min(1) @Max(5) Integer status, @RequestHeader("sign") String signature) {
         List<OrderResponseDto> result = marketService.getAllByStatus(page, limit, status, signature);
@@ -101,6 +102,15 @@ public class MarketController {
     @GetMapping("/book/by_id/{id}")
     public GlobalDto<OrderResponseDto> checkSuccess(@PathVariable Long id, @RequestHeader("sign") String signature) {
         OrderResponseDto result = marketService.getById(id, signature);
+        return new GlobalDto<>(
+                null,
+                result
+        );
+    }
+
+    @GetMapping("/book/detail/{id}")
+    public GlobalDto<Object> detail(@PathVariable Long id, @RequestHeader("sign") String signature) {
+        Object result = marketService.getDetailOrder(id, signature);
         return new GlobalDto<>(
                 null,
                 result
