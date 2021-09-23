@@ -13,7 +13,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 @ConfigurationPropertiesScan
 @AllArgsConstructor
-@EnableJpaRepositories(basePackages = {"com.viaje.market.repository"})
+@EnableJpaRepositories(basePackages = {"com.viaje.market.repositories"})
 public class MarketApplication {
 
     public static void main(String[] args) {

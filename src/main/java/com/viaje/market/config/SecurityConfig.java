@@ -1,9 +1,9 @@
 package com.viaje.market.config;
 
 
-import com.viaje.market.api_key.ApiKeyAuthenticationFilter;
-import com.viaje.market.api_key.ApiKeyAuthenticationProvider;
-import com.viaje.market.api_key.ApiKeyConfiguration;
+import com.viaje.market.config.api_key.ApiKeyAuthenticationFilter;
+import com.viaje.market.config.api_key.ApiKeyAuthenticationProvider;
+import com.viaje.market.config.api_key.ApiKeyConfiguration;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;

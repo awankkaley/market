@@ -1,6 +1,6 @@
 package com.viaje.market.scheduler;
 
-import com.viaje.market.service.MarketService;
+import com.viaje.market.services.MarketService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -19,13 +19,11 @@ public class Scheduler {
 
     @Scheduled(fixedDelay = 60000)
     public void cronJobCheckStatus() {
-        log.info("-------schedule running-------");
         marketService.checkStatusPeriodically();
     }
 
     @Scheduled(fixedDelay = 60000*60)
     public void cronJobPendingOrder() {
-        log.info("-------pending schedule running-------");
         marketService.createPendingOrder();
     }
 }

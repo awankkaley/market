@@ -2,19 +2,14 @@ package com.viaje.market.util;
 
 import com.viaje.market.config.CoinsbitConfiguration;
 import com.viaje.market.config.HotbitConfiguration;
-import com.viaje.market.dto.CoinsbitSignature;
+import com.viaje.market.dtos.CoinsbitSignature;
 import lombok.extern.slf4j.Slf4j;
-import net.minidev.json.JSONObject;
-import net.minidev.json.JSONStyle;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
-import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.sql.Timestamp;
 import java.util.Base64;
 import java.util.Formatter;
 

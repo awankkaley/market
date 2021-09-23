@@ -1,8 +1,8 @@
 package com.viaje.market.util;
 
-import com.viaje.market.base_dto.BaseError;
-import com.viaje.market.base_dto.GlobalErrorDto;
-import com.viaje.market.base_dto.GlobalMultipleErrorDto;
+import com.viaje.market.dtos.base_dto.BaseError;
+import com.viaje.market.dtos.base_dto.GlobalErrorDto;
+import com.viaje.market.dtos.base_dto.GlobalMultipleErrorDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
