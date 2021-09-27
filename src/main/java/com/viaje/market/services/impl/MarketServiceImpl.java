@@ -51,8 +51,8 @@ public class MarketServiceImpl implements MarketService {
 
     @Override
     public BalanceResponseDto getBalance(Integer exchange, String signature) {
-        String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&exchange=" + exchange;
-        signatureService.isValidSignature(payload, signature);
+//        String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&exchange=" + exchange;
+//        signatureService.isValidSignature(payload, signature);
         if (Objects.equals(exchange, ConstantValue.EXCHANGE_HOTBIT)) {
             return hotbitService.getBalance().toResponse();
         }
@@ -65,8 +65,8 @@ public class MarketServiceImpl implements MarketService {
 
     @Override
     public MarketResponse getMarketStatusToday(Integer exchange, String signature) {
-        String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&exchange=" + exchange;
-        signatureService.isValidSignature(payload, signature);
+//        String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&exchange=" + exchange;
+//        signatureService.isValidSignature(payload, signature);
         if (Objects.equals(exchange, ConstantValue.EXCHANGE_HOTBIT)) {
             return hotbitService.getMarketStatusToday().toResponse();
         }
@@ -79,8 +79,8 @@ public class MarketServiceImpl implements MarketService {
 
     @Override
     public HotbitPeriodDto getMarketStatusByPeriode(Integer exchange, Integer periode, String signature) {
-        String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&period=" + periode;
-        signatureService.isValidSignature(payload, signature);
+//        String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&period=" + periode;
+//        signatureService.isValidSignature(payload, signature);
         if (Objects.equals(exchange, ConstantValue.EXCHANGE_HOTBIT)) {
             return hotbitService.getMarketStatusByPeriode(periode);
         } else {
@@ -91,8 +91,8 @@ public class MarketServiceImpl implements MarketService {
 
     @Override
     public GlobalExchangeResponse postOrder(Integer exchange, OrderRequestDto orderRequestDto, String signature) {
-        String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&exchange=" + exchange + "&side=" + orderRequestDto.getSide() + "&amount=" + orderRequestDto.getAmount().toString();
-        signatureService.isValidSignature(payload, signature);
+//        String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&exchange=" + exchange + "&side=" + orderRequestDto.getSide() + "&amount=" + orderRequestDto.getAmount().toString();
+//        signatureService.isValidSignature(payload, signature);
         if (Objects.equals(exchange, ConstantValue.EXCHANGE_HOTBIT)) {
             return orderHotbit(orderRequestDto);
         }
@@ -106,8 +106,8 @@ public class MarketServiceImpl implements MarketService {
 
     @Override
     public GlobaExchangeMultipleResponse postMultipleOrder(Integer exchange, OrderMultipleRequestDto orderRequestDto, String signature) {
-        String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&exchange=" + exchange + "&amount=" + orderRequestDto.getAmount().toString();
-        signatureService.isValidSignature(payload, signature);
+//        String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&exchange=" + exchange + "&amount=" + orderRequestDto.getAmount().toString();
+//        signatureService.isValidSignature(payload, signature);
         if (Objects.equals(exchange, ConstantValue.EXCHANGE_HOTBIT)) {
             return postMultipleOrderHotbit(orderRequestDto);
         }
@@ -121,8 +121,8 @@ public class MarketServiceImpl implements MarketService {
 
     @Override
     public GlobalExchangeResponse cancelOrder(Integer exchange, Long orderId, String signature) {
-        String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&exchange=" + exchange + "&orderId=" + orderId;
-        signatureService.isValidSignature(payload, signature);
+//        String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&exchange=" + exchange + "&orderId=" + orderId;
+//        signatureService.isValidSignature(payload, signature);
         OrderEntity order = orderRepository.findByIdAndStatus(orderId, 1).orElseThrow(
                 () -> new IllegalArgumentException("Data Not Found")
         );
@@ -138,8 +138,8 @@ public class MarketServiceImpl implements MarketService {
 
     @Override
     public List<OrderResponseDto> getAll(Integer page, Integer limit, String signature) {
-        String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&page=" + page + "&limit=" + limit;
-        signatureService.isValidSignature(payload, signature);
+//        String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&page=" + page + "&limit=" + limit;
+//        signatureService.isValidSignature(payload, signature);
         Pageable paging = PageRequest.of(page, limit, Sort.by("id").descending());
         return orderRepository.findAllOrdersWithPagination(paging).stream()
                 .map(OrderEntity::toDtoList)
@@ -159,16 +159,16 @@ public class MarketServiceImpl implements MarketService {
 
     @Override
     public OrderResponseDto getById(Long orderId, String signature) {
-        String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&orderId=" + orderId;
-        signatureService.isValidSignature(payload, signature);
+//        String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&orderId=" + orderId;
+//        signatureService.isValidSignature(payload, signature);
         OrderEntity result = orderRepository.findById(orderId).orElseThrow(() -> new IllegalArgumentException("Data Not Found"));
         return result.toDtoList();
     }
 
     @Override
     public Object getDetailOrder(Long orderId, String signature) {
-        String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&orderId=" + orderId;
-        signatureService.isValidSignature(payload, signature);
+//        String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&orderId=" + orderId;
+//        signatureService.isValidSignature(payload, signature);
         OrderEntity order = orderRepository.findById(orderId).orElseThrow(() -> new IllegalArgumentException("Data Not Found"));
         if (Objects.equals(order.getExchangeCode(), ConstantValue.EXCHANGE_HOTBIT)) {
             return getDetailOrderHotbit(order.getExchangeOrderId());
@@ -248,6 +248,12 @@ public class MarketServiceImpl implements MarketService {
         order.setValid(true);
         order.setAmount(Double.valueOf(result.getResult().getAmount()));
         order.setPrice(Double.valueOf(result.getResult().getPrice()));
+        return orderRepository.save(order);
+    }
+
+    private OrderEntity updateStatusFailed(OrderEntity order) {
+        order.setStatus(ConstantValue.FAILED);
+        order.setValid(true);
         return orderRepository.save(order);
     }
 
@@ -382,12 +388,14 @@ public class MarketServiceImpl implements MarketService {
         OrderEntity orderBuy = orderRepository.save(orderRequestDto.toOrderEntity(ConstantValue.EXCHANGE_HOTBIT, marketPrice, ConstantValue.SIDE_BUY, Util.getAmountBuyFromPercentage(orderRequestDto.getBuyPercent(), orderRequestDto.getAmount())));
         OrderEntity orderSell = orderRepository.save(orderRequestDto.toOrderEntity(ConstantValue.EXCHANGE_HOTBIT, marketPrice, ConstantValue.SIDE_SELL, Util.getAmountSellFromPercentage(orderRequestDto.getBuyPercent(), orderRequestDto.getAmount())));
         HotbitOrderResponseDto resultBuy = hotbitService.postOrder(ConstantValue.SIDE_BUY, Util.getAmountBuyFromPercentage(orderRequestDto.getBuyPercent(), orderRequestDto.getAmount()), marketPrice);
-        HotbitOrderResponseDto resultSell = hotbitService.postOrder(ConstantValue.SIDE_SELL, Util.getAmountSellFromPercentage(orderRequestDto.getBuyPercent(), orderRequestDto.getAmount()), marketPrice);
         if (resultBuy == null) {
-            orderBuy = updateStatusPending(orderBuy);
+            updateStatusFailed(orderBuy);
+            updateStatusFailed(orderSell);
+            throw new IllegalArgumentException("Failed to access Hotbit");
         } else {
             orderBuy = updateStatusSuccess(orderBuy, resultBuy);
         }
+        HotbitOrderResponseDto resultSell = hotbitService.postOrder(ConstantValue.SIDE_SELL, Util.getAmountSellFromPercentage(orderRequestDto.getBuyPercent(), orderRequestDto.getAmount()), marketPrice);
         if (resultSell == null) {
             orderSell = updateStatusPending(orderSell);
         } else {
@@ -404,12 +412,14 @@ public class MarketServiceImpl implements MarketService {
         OrderEntity orderBuy = orderRepository.save(orderRequestDto.toOrderEntity(ConstantValue.EXCHANGE_COINSBIT, marketPrice, ConstantValue.SIDE_BUY, Util.getAmountBuyFromPercentage(orderRequestDto.getBuyPercent(), orderRequestDto.getAmount())));
         OrderEntity orderSell = orderRepository.save(orderRequestDto.toOrderEntity(ConstantValue.EXCHANGE_COINSBIT, marketPrice, ConstantValue.SIDE_SELL, Util.getAmountSellFromPercentage(orderRequestDto.getBuyPercent(), orderRequestDto.getAmount())));
         CoinsbitOrderDto resultBuy = coinsbitService.postOrder(ConstantValue.SIDE_BUY, Util.getAmountBuyFromPercentage(orderRequestDto.getBuyPercent(), orderRequestDto.getAmount()), marketPrice);
-        CoinsbitOrderDto resultSell = coinsbitService.postOrder(ConstantValue.SIDE_SELL, Util.getAmountSellFromPercentage(orderRequestDto.getBuyPercent(), orderRequestDto.getAmount()), marketPrice);
         if (resultBuy == null) {
-            orderBuy = updateStatusPending(orderBuy);
+            updateStatusFailed(orderBuy);
+            updateStatusFailed(orderSell);
+            throw new IllegalArgumentException("Failed to access Hotbit");
         } else {
             orderBuy = updateStatusSuccessCoinsbit(orderBuy, resultBuy);
         }
+        CoinsbitOrderDto resultSell = coinsbitService.postOrder(ConstantValue.SIDE_SELL, Util.getAmountSellFromPercentage(orderRequestDto.getBuyPercent(), orderRequestDto.getAmount()), marketPrice);
         if (resultSell == null) {
             orderSell = updateStatusPending(orderSell);
         } else {
