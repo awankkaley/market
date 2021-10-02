@@ -21,6 +21,7 @@ public class OrderRequestDto {
     @NotNull(message = "Please provide a amount")
     private Double amount;
 
+    private Double price;
 
     public OrderEntity toOrderEntity(Integer exchangeCode, Double price) {
         return OrderEntity.builder()

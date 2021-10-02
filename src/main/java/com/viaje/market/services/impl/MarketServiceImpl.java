@@ -276,7 +276,9 @@ public class MarketServiceImpl implements MarketService {
 
     private GlobalExchangeResponse orderHotbit(OrderRequestDto orderRequestDto) {
         HotbitTodayDto market = hotbitService.getMarketStatusToday();
-        double marketPrice = Double.parseDouble(market.getResult().getLast());
+        if (orderRequestDto.getPrice() == null) {
+            orderRequestDto.setPrice(Double.parseDouble(market.getResult().getLast()));
+        }
         // TODO: 10/09/21 for testing only
 //        if (orderRequestDto.getSide() == 1) {
 //            marketPrice = marketPrice + 0.1000;
@@ -285,8 +287,8 @@ public class MarketServiceImpl implements MarketService {
 //            marketPrice = marketPrice - 0.1000;
 //        }
         //<<<FOR TESTING ONLY
-        OrderEntity order = orderRepository.save(orderRequestDto.toOrderEntity(1, marketPrice));
-        HotbitOrderResponseDto result = hotbitService.postOrder(orderRequestDto.getSide(), orderRequestDto.getAmount(), marketPrice);
+        OrderEntity order = orderRepository.save(orderRequestDto.toOrderEntity(1, orderRequestDto.getPrice()));
+        HotbitOrderResponseDto result = hotbitService.postOrder(orderRequestDto.getSide(), orderRequestDto.getAmount(), orderRequestDto.getPrice());
         if (result != null && result.getError() == null) {
             order.setStatus(ConstantValue.CREATED);
             order.setValid(true);
@@ -311,7 +313,9 @@ public class MarketServiceImpl implements MarketService {
 
     private GlobalExchangeResponse orderCoinsbit(OrderRequestDto orderRequestDto) {
         CoinsbitMarketDto market = coinsbitService.getMarketStatusToday();
-        double marketPrice = Double.parseDouble(market.getResult().getLast());
+        if (orderRequestDto.getPrice() == null) {
+            orderRequestDto.setPrice(Double.parseDouble(market.getResult().getLast()));
+        }
         // TODO: 10/09/21 for testing only
 //        if (orderRequestDto.getSide() == 1) {
 //            marketPrice = marketPrice + 0.1000;
@@ -320,8 +324,8 @@ public class MarketServiceImpl implements MarketService {
 //            marketPrice = marketPrice - 0.1000;
 //        }
         //<<<FOR TESTING ONLY
-        OrderEntity order = orderRepository.save(orderRequestDto.toOrderEntity(2, marketPrice));
-        CoinsbitOrderDto result = coinsbitService.postOrder(orderRequestDto.getSide(), orderRequestDto.getAmount(), marketPrice);
+        OrderEntity order = orderRepository.save(orderRequestDto.toOrderEntity(2, orderRequestDto.getPrice()));
+        CoinsbitOrderDto result = coinsbitService.postOrder(orderRequestDto.getSide(), orderRequestDto.getAmount(), orderRequestDto.getPrice());
         if (result != null && result.isSuccess()) {
             order.setStatus(ConstantValue.CREATED);
             order.setValid(true);
@@ -384,10 +388,12 @@ public class MarketServiceImpl implements MarketService {
 
     private GlobaExchangeMultipleResponse postMultipleOrderHotbit(OrderMultipleRequestDto orderRequestDto) {
         HotbitTodayDto market = hotbitService.getMarketStatusToday();
-        double marketPrice = Double.parseDouble(market.getResult().getLast());
-        OrderEntity orderBuy = orderRepository.save(orderRequestDto.toOrderEntity(ConstantValue.EXCHANGE_HOTBIT, marketPrice, ConstantValue.SIDE_BUY, Util.getAmountBuyFromPercentage(orderRequestDto.getBuyPercent(), orderRequestDto.getAmount())));
-        OrderEntity orderSell = orderRepository.save(orderRequestDto.toOrderEntity(ConstantValue.EXCHANGE_HOTBIT, marketPrice, ConstantValue.SIDE_SELL, Util.getAmountSellFromPercentage(orderRequestDto.getBuyPercent(), orderRequestDto.getAmount())));
-        HotbitOrderResponseDto resultBuy = hotbitService.postOrder(ConstantValue.SIDE_BUY, Util.getAmountBuyFromPercentage(orderRequestDto.getBuyPercent(), orderRequestDto.getAmount()), marketPrice);
+        if (orderRequestDto.getPrice() == null) {
+            orderRequestDto.setPrice(Double.parseDouble(market.getResult().getLast()));
+        }
+        OrderEntity orderBuy = orderRepository.save(orderRequestDto.toOrderEntity(ConstantValue.EXCHANGE_HOTBIT, orderRequestDto.getPrice(), ConstantValue.SIDE_BUY, Util.getAmountBuyFromPercentage(orderRequestDto.getBuyPercent(), orderRequestDto.getAmount())));
+        OrderEntity orderSell = orderRepository.save(orderRequestDto.toOrderEntity(ConstantValue.EXCHANGE_HOTBIT, orderRequestDto.getPrice(), ConstantValue.SIDE_SELL, Util.getAmountSellFromPercentage(orderRequestDto.getBuyPercent(), orderRequestDto.getAmount())));
+        HotbitOrderResponseDto resultBuy = hotbitService.postOrder(ConstantValue.SIDE_BUY, Util.getAmountBuyFromPercentage(orderRequestDto.getBuyPercent(), orderRequestDto.getAmount()), orderRequestDto.getPrice());
         if (resultBuy == null) {
             updateStatusFailed(orderBuy);
             updateStatusFailed(orderSell);
@@ -395,7 +401,7 @@ public class MarketServiceImpl implements MarketService {
         } else {
             orderBuy = updateStatusSuccess(orderBuy, resultBuy);
         }
-        HotbitOrderResponseDto resultSell = hotbitService.postOrder(ConstantValue.SIDE_SELL, Util.getAmountSellFromPercentage(orderRequestDto.getBuyPercent(), orderRequestDto.getAmount()), marketPrice);
+        HotbitOrderResponseDto resultSell = hotbitService.postOrder(ConstantValue.SIDE_SELL, Util.getAmountSellFromPercentage(orderRequestDto.getBuyPercent(), orderRequestDto.getAmount()), orderRequestDto.getPrice());
         if (resultSell == null) {
             orderSell = updateStatusPending(orderSell);
         } else {
@@ -408,10 +414,12 @@ public class MarketServiceImpl implements MarketService {
 
     private GlobaExchangeMultipleResponse postMultipleOrderCoinsbit(OrderMultipleRequestDto orderRequestDto) {
         CoinsbitMarketDto market = coinsbitService.getMarketStatusToday();
-        double marketPrice = Double.parseDouble(market.getResult().getLast());
-        OrderEntity orderBuy = orderRepository.save(orderRequestDto.toOrderEntity(ConstantValue.EXCHANGE_COINSBIT, marketPrice, ConstantValue.SIDE_BUY, Util.getAmountBuyFromPercentage(orderRequestDto.getBuyPercent(), orderRequestDto.getAmount())));
-        OrderEntity orderSell = orderRepository.save(orderRequestDto.toOrderEntity(ConstantValue.EXCHANGE_COINSBIT, marketPrice, ConstantValue.SIDE_SELL, Util.getAmountSellFromPercentage(orderRequestDto.getBuyPercent(), orderRequestDto.getAmount())));
-        CoinsbitOrderDto resultBuy = coinsbitService.postOrder(ConstantValue.SIDE_BUY, Util.getAmountBuyFromPercentage(orderRequestDto.getBuyPercent(), orderRequestDto.getAmount()), marketPrice);
+        if (orderRequestDto.getPrice() == null) {
+            orderRequestDto.setPrice(Double.parseDouble(market.getResult().getLast()));
+        }
+        OrderEntity orderBuy = orderRepository.save(orderRequestDto.toOrderEntity(ConstantValue.EXCHANGE_COINSBIT, orderRequestDto.getPrice(), ConstantValue.SIDE_BUY, Util.getAmountBuyFromPercentage(orderRequestDto.getBuyPercent(), orderRequestDto.getAmount())));
+        OrderEntity orderSell = orderRepository.save(orderRequestDto.toOrderEntity(ConstantValue.EXCHANGE_COINSBIT, orderRequestDto.getPrice(), ConstantValue.SIDE_SELL, Util.getAmountSellFromPercentage(orderRequestDto.getBuyPercent(), orderRequestDto.getAmount())));
+        CoinsbitOrderDto resultBuy = coinsbitService.postOrder(ConstantValue.SIDE_BUY, Util.getAmountBuyFromPercentage(orderRequestDto.getBuyPercent(), orderRequestDto.getAmount()), orderRequestDto.getPrice());
         if (resultBuy == null) {
             updateStatusFailed(orderBuy);
             updateStatusFailed(orderSell);
@@ -419,7 +427,7 @@ public class MarketServiceImpl implements MarketService {
         } else {
             orderBuy = updateStatusSuccessCoinsbit(orderBuy, resultBuy);
         }
-        CoinsbitOrderDto resultSell = coinsbitService.postOrder(ConstantValue.SIDE_SELL, Util.getAmountSellFromPercentage(orderRequestDto.getBuyPercent(), orderRequestDto.getAmount()), marketPrice);
+        CoinsbitOrderDto resultSell = coinsbitService.postOrder(ConstantValue.SIDE_SELL, Util.getAmountSellFromPercentage(orderRequestDto.getBuyPercent(), orderRequestDto.getAmount()), orderRequestDto.getPrice());
         if (resultSell == null) {
             orderSell = updateStatusPending(orderSell);
         } else {

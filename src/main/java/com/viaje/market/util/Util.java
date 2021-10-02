@@ -11,4 +11,17 @@ public class Util {
         double sellPercent = percent - buyPercent.doubleValue();
         return (sellPercent / 100) * amount;
     }
+
+    public static String statusTitle(Integer status) {
+        switch (status) {
+            case 1:
+                return "Created";
+            case 2:
+                return "Failed";
+            case 3:
+                return "Finished";
+            default:
+                return "";
+        }
+    }
 }

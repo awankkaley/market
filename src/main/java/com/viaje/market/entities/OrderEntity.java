@@ -4,6 +4,7 @@ import com.viaje.market.dtos.base_dto.BaseTimeEntity;
 import com.viaje.market.dtos.GlobalExchangeResponse;
 import com.viaje.market.dtos.HotbitErrorDto;
 import com.viaje.market.dtos.hotbit_order.OrderResponseDto;
+import com.viaje.market.util.Util;
 import lombok.*;
 
 import javax.persistence.*;
@@ -57,7 +58,7 @@ public class OrderEntity extends BaseTimeEntity {
     public GlobalExchangeResponse toDto(HotbitErrorDto error) {
         return GlobalExchangeResponse.builder()
                 .error(error)
-                .result(new OrderResponseDto(id, exchangeOrderId, exchangeCode, side, amount, currentPrice, price, status, info, isValid))
+                .result(new OrderResponseDto(id, exchangeOrderId, exchangeCode, side, amount, currentPrice, price, status, Util.statusTitle(status), info, isValid))
                 .build();
     }
 
@@ -68,6 +69,7 @@ public class OrderEntity extends BaseTimeEntity {
                 .exchangeCode(exchangeCode)
                 .side(side)
                 .amount(amount)
+                .statusTitle(Util.statusTitle(status))
                 .currentPrice(currentPrice)
                 .price(price)
                 .status(status)

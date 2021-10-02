@@ -25,6 +25,9 @@ public class OrderResponseDto {
 
     private Integer status;
 
+    private String statusTitle;
+
+
     private String info;
 
     private boolean isValid;

@@ -20,6 +20,8 @@ public class OrderMultipleRequestDto {
     @NotNull(message = "Please provide a buy ratio")
     private Integer buyPercent;
 
+    private Double price;
+
 
     public OrderEntity toOrderEntity(Integer exchangeCode, Double price, Integer side, Double amount) {
         return OrderEntity.builder()
