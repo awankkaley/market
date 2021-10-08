@@ -51,8 +51,8 @@ public class MarketServiceImpl implements MarketService {
 
     @Override
     public BalanceResponseDto getBalance(Integer exchange, String signature) {
-//        String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&exchange=" + exchange;
-//        signatureService.isValidSignature(payload, signature);
+        String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&exchange=" + exchange;
+        signatureService.isValidSignature(payload, signature);
         if (Objects.equals(exchange, ConstantValue.EXCHANGE_HOTBIT)) {
             return hotbitService.getBalance().toResponse();
         }
@@ -65,8 +65,8 @@ public class MarketServiceImpl implements MarketService {
 
     @Override
     public MarketResponse getMarketStatusToday(Integer exchange, String signature) {
-//        String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&exchange=" + exchange;
-//        signatureService.isValidSignature(payload, signature);
+        String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&exchange=" + exchange;
+        signatureService.isValidSignature(payload, signature);
         if (Objects.equals(exchange, ConstantValue.EXCHANGE_HOTBIT)) {
             return hotbitService.getMarketStatusToday().toResponse();
         }
@@ -79,8 +79,8 @@ public class MarketServiceImpl implements MarketService {
 
     @Override
     public HotbitPeriodDto getMarketStatusByPeriode(Integer exchange, Integer periode, String signature) {
-//        String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&period=" + periode;
-//        signatureService.isValidSignature(payload, signature);
+        String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&period=" + periode;
+        signatureService.isValidSignature(payload, signature);
         if (Objects.equals(exchange, ConstantValue.EXCHANGE_HOTBIT)) {
             return hotbitService.getMarketStatusByPeriode(periode);
         } else {
@@ -91,8 +91,8 @@ public class MarketServiceImpl implements MarketService {
 
     @Override
     public GlobalExchangeResponse postOrder(Integer exchange, OrderRequestDto orderRequestDto, String signature) {
-//        String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&exchange=" + exchange + "&side=" + orderRequestDto.getSide() + "&amount=" + orderRequestDto.getAmount().toString();
-//        signatureService.isValidSignature(payload, signature);
+        String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&exchange=" + exchange + "&side=" + orderRequestDto.getSide() + "&amount=" + orderRequestDto.getAmount().toString();
+        signatureService.isValidSignature(payload, signature);
         if (Objects.equals(exchange, ConstantValue.EXCHANGE_HOTBIT)) {
             return orderHotbit(orderRequestDto);
         }
@@ -106,8 +106,8 @@ public class MarketServiceImpl implements MarketService {
 
     @Override
     public GlobaExchangeMultipleResponse postMultipleOrder(Integer exchange, OrderMultipleRequestDto orderRequestDto, String signature) {
-//        String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&exchange=" + exchange + "&amount=" + orderRequestDto.getAmount().toString();
-//        signatureService.isValidSignature(payload, signature);
+        String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&exchange=" + exchange + "&amount=" + orderRequestDto.getAmount().toString();
+        signatureService.isValidSignature(payload, signature);
         if (Objects.equals(exchange, ConstantValue.EXCHANGE_HOTBIT)) {
             return postMultipleOrderHotbit(orderRequestDto);
         }
@@ -121,8 +121,8 @@ public class MarketServiceImpl implements MarketService {
 
     @Override
     public GlobalExchangeResponse cancelOrder(Integer exchange, Long orderId, String signature) {
-//        String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&exchange=" + exchange + "&orderId=" + orderId;
-//        signatureService.isValidSignature(payload, signature);
+        String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&exchange=" + exchange + "&orderId=" + orderId;
+        signatureService.isValidSignature(payload, signature);
         OrderEntity order = orderRepository.findByIdAndStatus(orderId, 1).orElseThrow(
                 () -> new IllegalArgumentException("Data Not Found")
         );
@@ -138,8 +138,8 @@ public class MarketServiceImpl implements MarketService {
 
     @Override
     public List<OrderResponseDto> getAll(Integer page, Integer limit, String signature) {
-//        String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&page=" + page + "&limit=" + limit;
-//        signatureService.isValidSignature(payload, signature);
+        String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&page=" + page + "&limit=" + limit;
+        signatureService.isValidSignature(payload, signature);
         Pageable paging = PageRequest.of(page, limit, Sort.by("id").descending());
         return orderRepository.findAllOrdersWithPagination(paging).stream()
                 .map(OrderEntity::toDtoList)
@@ -148,8 +148,8 @@ public class MarketServiceImpl implements MarketService {
 
     @Override
     public List<OrderResponseDto> getAllByStatus(Integer page, Integer limit, Integer status, String signature) {
-//        String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&page=" + page + "&limit=" + limit + "&status=" + status;
-//        signatureService.isValidSignature(payload, signature);
+        String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&page=" + page + "&limit=" + limit + "&status=" + status;
+        signatureService.isValidSignature(payload, signature);
         Pageable paging = PageRequest.of(page, limit, Sort.by("id").descending());
         return orderRepository.findAllOrdersWithPaginationAnStatus(paging, status).stream()
                 .map(OrderEntity::toDtoList)
@@ -159,16 +159,16 @@ public class MarketServiceImpl implements MarketService {
 
     @Override
     public OrderResponseDto getById(Long orderId, String signature) {
-//        String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&orderId=" + orderId;
-//        signatureService.isValidSignature(payload, signature);
+        String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&orderId=" + orderId;
+        signatureService.isValidSignature(payload, signature);
         OrderEntity result = orderRepository.findById(orderId).orElseThrow(() -> new IllegalArgumentException("Data Not Found"));
         return result.toDtoList();
     }
 
     @Override
     public Object getDetailOrder(Long orderId, String signature) {
-//        String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&orderId=" + orderId;
-//        signatureService.isValidSignature(payload, signature);
+        String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&orderId=" + orderId;
+        signatureService.isValidSignature(payload, signature);
         OrderEntity order = orderRepository.findById(orderId).orElseThrow(() -> new IllegalArgumentException("Data Not Found"));
         if (Objects.equals(order.getExchangeCode(), ConstantValue.EXCHANGE_HOTBIT)) {
             return getDetailOrderHotbit(order.getExchangeOrderId());
