@@ -13,7 +13,7 @@ public interface HotbitService {
 
     HotbitPeriodDto getMarketStatusByPeriode(Integer periode);
 
-    HotbitOrderResponseDto postOrder(Integer side, Double amount, Double price);
+    HotbitOrderResponseDto postOrder(String side, Double amount, Double price);
 
     HotbitOrderResponseDto cancelOrder(Long orderId);
 

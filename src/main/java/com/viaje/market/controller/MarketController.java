@@ -32,7 +32,7 @@ public class MarketController {
 
 
     @GetMapping("/balance/{exchangeCode}")
-    public GlobalDto<BalanceResponseDto> balance(@PathVariable @Min(1) @Max(5) Integer exchangeCode, @RequestHeader("sign") String signature) {
+    public GlobalDto<BalanceResponseDto> balance(@PathVariable String exchangeCode, @RequestHeader("sign") String signature) {
         BalanceResponseDto result = marketService.getBalance(exchangeCode, signature);
         return new GlobalDto<>(
                 null,
@@ -41,7 +41,7 @@ public class MarketController {
     }
 
     @GetMapping("/market/today/{exchangeCode}")
-    public GlobalDto<MarketResponse> marketToday(@PathVariable @Min(1) @Max(5) Integer exchangeCode, @RequestHeader("sign") String signature) {
+    public GlobalDto<MarketResponse> marketToday(@PathVariable String exchangeCode, @RequestHeader("sign") String signature) {
         MarketResponse result = marketService.getMarketStatusToday(exchangeCode, signature);
         return new GlobalDto<>(
                 null,
@@ -51,7 +51,7 @@ public class MarketController {
 
     @GetMapping("/market/period")
     public GlobalDto<HotbitPeriodResultDto> marketPeriod(@RequestParam String period, @RequestHeader("sign") String signature) {
-        HotbitPeriodDto result = marketService.getMarketStatusByPeriode(1, Integer.valueOf(period), signature);
+        HotbitPeriodDto result = marketService.getMarketStatusByPeriode("hotbit", Integer.valueOf(period), signature);
         return new GlobalDto<>(
                 result.getError(),
                 result.getResult()
@@ -59,7 +59,7 @@ public class MarketController {
     }
 
     @PostMapping("/book/order/single/{exchangeCode}")
-    public GlobalDto<OrderResponseDto> order(@PathVariable @Min(1) @Max(5) Integer exchangeCode, @Valid @RequestBody OrderRequestDto orderRequestDto, @RequestHeader("sign") String signature) {
+    public GlobalDto<OrderResponseDto> order(@PathVariable String exchangeCode, @Valid @RequestBody OrderRequestDto orderRequestDto, @RequestHeader("sign") String signature) {
         GlobalExchangeResponse result = marketService.postOrder(exchangeCode, orderRequestDto, signature);
         return new GlobalDto<>(
                 result.getError(),
@@ -68,7 +68,7 @@ public class MarketController {
     }
 
     @PostMapping("/book/order/both/{exchangeCode}")
-    public GlobalDto<List<OrderResponseDto>> ordermultiple(@PathVariable @Min(1) @Max(5) Integer exchangeCode, @Valid @RequestBody OrderMultipleRequestDto orderRequestDto, @RequestHeader("sign") String signature) {
+    public GlobalDto<List<OrderResponseDto>> ordermultiple(@PathVariable String exchangeCode, @Valid @RequestBody OrderMultipleRequestDto orderRequestDto, @RequestHeader("sign") String signature) {
         GlobaExchangeMultipleResponse result = marketService.postMultipleOrder(exchangeCode, orderRequestDto, signature);
         return new GlobalDto<>(
                 result.getError(),
@@ -77,7 +77,7 @@ public class MarketController {
     }
 
     @PostMapping("/book/cancel/{exchangeCode}")
-    public GlobalDto<OrderResponseDto> cancel(@PathVariable @Min(1) @Max(5) Integer exchangeCode, @Valid @RequestBody Map<String, Long> orderId, @RequestHeader("sign") String signature) {
+    public GlobalDto<OrderResponseDto> cancel(@PathVariable String exchangeCode, @Valid @RequestBody Map<String, Long> orderId, @RequestHeader("sign") String signature) {
         GlobalExchangeResponse result = marketService.cancelOrder(exchangeCode, orderId.get("orderId"), signature);
         return new GlobalDto<>(result.getError(), result.getResult());
     }

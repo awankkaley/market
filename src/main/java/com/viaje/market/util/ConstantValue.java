@@ -9,11 +9,11 @@ public class ConstantValue {
     public static final Integer ABNORMAL = 4;
 
 
-    public static final Integer SIDE_SELL = 1;
-    public static final Integer SIDE_BUY = 2;
+    public static final String SIDE_SELL = "sell";
+    public static final String SIDE_BUY = "buy";
 
-    public static final Integer EXCHANGE_HOTBIT = 1;
-    public static final Integer EXCHANGE_COINSBIT = 2;
+    public static final String EXCHANGE_HOTBIT = "hotbit";
+    public static final String EXCHANGE_COINSBIT = "coinsbit";
 
 
 

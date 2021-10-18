@@ -13,9 +13,9 @@ public class OrderResponseDto {
 
     private Long exchangeOrderId;
 
-    private Integer exchangeCode;
+    private String exchangeCode;
 
-    private Integer side;
+    private String side;
 
     private Double amount;
 

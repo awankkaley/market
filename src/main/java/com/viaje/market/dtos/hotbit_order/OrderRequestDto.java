@@ -13,17 +13,15 @@ import javax.validation.constraints.*;
 @AllArgsConstructor
 @Builder
 public class OrderRequestDto {
-    @NotNull(message = "Please provide a side")
-    @Min(value = 1, message = "Please input a correct format")
-    @Max(value = 2, message = "Please input a correct format")
-    private Integer side;
+    @NotBlank(message = "Please provide a side (buy or sell)")
+    private String side;
 
     @NotNull(message = "Please provide a amount")
     private Double amount;
 
     private Double price;
 
-    public OrderEntity toOrderEntity(Integer exchangeCode, Double price) {
+    public OrderEntity toOrderEntity(String exchangeCode, Double price) {
         return OrderEntity.builder()
                 .exchangeCode(exchangeCode)
                 .amount(amount)

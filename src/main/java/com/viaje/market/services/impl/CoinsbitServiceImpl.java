@@ -118,24 +118,17 @@ public class CoinsbitServiceImpl implements CoinsbitService {
 
 
     @Override
-    public CoinsbitOrderDto postOrder(Integer side, Double amount, Double price) {
+    public CoinsbitOrderDto postOrder(String side, Double amount, Double price) {
         CoinsbitOrderDto coinsbitOrderDto = null;
         String request = "/api/v1/order/new";
         String fullUrl = ConstantValue.BASE_URL + request;
-        String stringSide = "";
-        if (side == 2) {
-            stringSide = "buy";
-        }
-        if (side == 1) {
-            stringSide = "sell";
-        }
         try {
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
             JSONObject json = new JSONObject();
             json.put("request", request);
             json.put("nonce", timestamp.getTime());
             json.put("market", "BSI_USDT");
-            json.put("side", stringSide);
+            json.put("side", side);
             json.put("amount", amount.toString());
             json.put("price", price.toString());
             CoinsbitSignature coinsbitSignature = SignatureUtil.GenerateSignatureCoinsbit(json.toJSONString(), coinsbitConfiguration);

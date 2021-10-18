@@ -23,7 +23,7 @@ public class OrderMultipleRequestDto {
     private Double price;
 
 
-    public OrderEntity toOrderEntity(Integer exchangeCode, Double price, Integer side, Double amount) {
+    public OrderEntity toOrderEntity(String exchangeCode, Double price, String side, Double amount) {
         return OrderEntity.builder()
                 .exchangeOrderId(null)
                 .exchangeCode(exchangeCode)

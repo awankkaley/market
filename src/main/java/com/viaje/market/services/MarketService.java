@@ -12,17 +12,17 @@ import com.viaje.market.dtos.response.MarketResponse;
 import java.util.List;
 
 public interface MarketService {
-    BalanceResponseDto getBalance(Integer exchange, String signature);
+    BalanceResponseDto getBalance(String exchange, String signature);
 
-    MarketResponse getMarketStatusToday(Integer exchange, String signature);
+    MarketResponse getMarketStatusToday(String exchange, String signature);
 
-    HotbitPeriodDto getMarketStatusByPeriode(Integer exchange, Integer periode, String signature);
+    HotbitPeriodDto getMarketStatusByPeriode(String exchange, Integer periode, String signature);
 
-    GlobalExchangeResponse postOrder(Integer exchange, OrderRequestDto orderRequestDto, String signature);
+    GlobalExchangeResponse postOrder(String exchange, OrderRequestDto orderRequestDto, String signature);
 
-    GlobaExchangeMultipleResponse postMultipleOrder(Integer exchange, OrderMultipleRequestDto orderMultipleRequestDto, String signature);
+    GlobaExchangeMultipleResponse postMultipleOrder(String exchange, OrderMultipleRequestDto orderMultipleRequestDto, String signature);
 
-    GlobalExchangeResponse cancelOrder(Integer exchange, Long orderId, String signature);
+    GlobalExchangeResponse cancelOrder(String exchange, Long orderId, String signature);
 
     List<OrderResponseDto> getAll(Integer page, Integer limit, String signature);
 

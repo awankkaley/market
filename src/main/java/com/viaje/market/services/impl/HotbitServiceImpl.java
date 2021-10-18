@@ -23,6 +23,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -120,14 +121,18 @@ public class HotbitServiceImpl implements HotbitService {
 
 
     @Override
-    public HotbitOrderResponseDto postOrder(Integer side, Double amount, Double price) {
+    public HotbitOrderResponseDto postOrder(String side, Double amount, Double price) {
         HotbitOrderResponseDto hotbitOrderResponseDto = null;
+        int sideInt = 1;
+        if (Objects.equals(side, "buy")) {
+            sideInt = 2;
+        }
         try {
-            String data = "amount=" + amount + "&api_key=" + hotbitConfiguration.getKey() + "&isfee=" + 0 + "&market=BSI/USDT&price=" + price + "&side=" + side;
+            String data = "amount=" + amount + "&api_key=" + hotbitConfiguration.getKey() + "&isfee=" + 0 + "&market=BSI/USDT&price=" + price + "&side=" + sideInt;
             String sign = SignatureUtil.GenerateSignatureHotbit(data, hotbitConfiguration);
             UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString("https://api.hotbit.io/v2/p2/order.put_limit")
                     .queryParam("api_key", hotbitConfiguration.getKey())
-                    .queryParam("side", side)
+                    .queryParam("side", sideInt)
                     .queryParam("amount", amount)
                     .queryParam("price", price)
                     .queryParam("isfee", 0)
@@ -138,7 +143,7 @@ public class HotbitServiceImpl implements HotbitService {
             hotbitOrderResponseDto = om.readValue(response, HotbitOrderResponseDto.class);
             if (hotbitOrderResponseDto.getError() != null) {
                 return null;
-            }else {
+            } else {
                 hotbitRepository.save(hotbitOrderResponseDto.getResult().toEntity());
             }
         } catch (HttpClientErrorException e) {
@@ -216,7 +221,6 @@ public class HotbitServiceImpl implements HotbitService {
         }
         return hotbitSuccessResponseDto;
     }
-
 
 
 //    @Override
