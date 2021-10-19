@@ -22,7 +22,7 @@ public interface MarketService {
 
     GlobaExchangeMultipleResponse postMultipleOrder(String exchange, OrderMultipleRequestDto orderMultipleRequestDto, String signature);
 
-    GlobalExchangeResponse cancelOrder(String exchange, Long orderId, String signature);
+    GlobalExchangeResponse cancelOrder(Long orderId, String signature);
 
     List<OrderResponseDto> getAll(Integer page, Integer limit, String signature);
 

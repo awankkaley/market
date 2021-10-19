@@ -120,19 +120,16 @@ public class MarketServiceImpl implements MarketService {
     }
 
     @Override
-    public GlobalExchangeResponse cancelOrder(String exchange, Long orderId, String signature) {
-        String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&exchange=" + exchange + "&orderId=" + orderId;
+    public GlobalExchangeResponse cancelOrder(Long orderId, String signature) {
+        String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&orderId=" + orderId;
         signatureService.isValidSignature(payload, signature);
         OrderEntity order = orderRepository.findByIdAndStatus(orderId, 1).orElseThrow(
                 () -> new IllegalArgumentException("Data Not Found")
         );
-        if (Objects.equals(exchange, ConstantValue.EXCHANGE_HOTBIT)) {
+        if (order.getExchangeCode().equals("hotbit")) {
             return cancelOrderHotsbit(order);
-        }
-        if (Objects.equals(exchange, ConstantValue.EXCHANGE_COINSBIT)) {
-            return cancelOrderCoinsbit(order);
         } else {
-            throw new IllegalArgumentException("Exchange Not Found");
+            return cancelOrderCoinsbit(order);
         }
     }
 

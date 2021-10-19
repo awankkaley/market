@@ -76,9 +76,9 @@ public class MarketController {
         );
     }
 
-    @PostMapping("/book/cancel/{exchangeCode}")
-    public GlobalDto<OrderResponseDto> cancel(@PathVariable String exchangeCode, @Valid @RequestBody Map<String, Long> orderId, @RequestHeader("sign") String signature) {
-        GlobalExchangeResponse result = marketService.cancelOrder(exchangeCode, orderId.get("orderId"), signature);
+    @PostMapping("/book/cancel}")
+    public GlobalDto<OrderResponseDto> cancel(@Valid @RequestBody Map<String, Long> orderId, @RequestHeader("sign") String signature) {
+        GlobalExchangeResponse result = marketService.cancelOrder(orderId.get("orderId"), signature);
         return new GlobalDto<>(result.getError(), result.getResult());
     }
 
