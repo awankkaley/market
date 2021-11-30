@@ -32,9 +32,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .addFilterBefore(new ApiKeyAuthenticationFilter(authenticationManager(), apiKeyConfiguration), UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
-//                .antMatchers(
-//                        "/api/v1/**"
-//                ).permitAll()
+                .antMatchers("/health_test").permitAll() // hello
                 .anyRequest()
                 .authenticated()
                 .and()

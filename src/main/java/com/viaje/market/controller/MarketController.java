@@ -12,6 +12,7 @@ import com.viaje.market.dtos.response.MarketResponse;
 import com.viaje.market.services.MarketService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,12 +27,11 @@ import java.util.Map;
 @AllArgsConstructor
 @Slf4j
 @Validated
-@RequestMapping("/api/v1")
 public class MarketController {
     private final MarketService marketService;
 
 
-    @GetMapping("/balance/{exchangeCode}")
+    @GetMapping("/api/v1/balance/{exchangeCode}")
     public GlobalDto<BalanceResponseDto> balance(@PathVariable String exchangeCode, @RequestHeader("sign") String signature) {
         BalanceResponseDto result = marketService.getBalance(exchangeCode, signature);
         return new GlobalDto<>(
@@ -40,7 +40,7 @@ public class MarketController {
         );
     }
 
-    @GetMapping("/market/today/{exchangeCode}")
+    @GetMapping("/api/v1/market/today/{exchangeCode}")
     public GlobalDto<MarketResponse> marketToday(@PathVariable String exchangeCode, @RequestHeader("sign") String signature) {
         MarketResponse result = marketService.getMarketStatusToday(exchangeCode, signature);
         return new GlobalDto<>(
@@ -49,7 +49,7 @@ public class MarketController {
         );
     }
 
-    @GetMapping("/market/period")
+    @GetMapping("/api/v1/market/period")
     public GlobalDto<HotbitPeriodResultDto> marketPeriod(@RequestParam String period, @RequestHeader("sign") String signature) {
         HotbitPeriodDto result = marketService.getMarketStatusByPeriode("hotbit", Integer.valueOf(period), signature);
         return new GlobalDto<>(
@@ -58,7 +58,7 @@ public class MarketController {
         );
     }
 
-    @PostMapping("/book/order/single/{exchangeCode}")
+    @PostMapping("/api/v1/book/order/single/{exchangeCode}")
     public GlobalDto<OrderResponseDto> order(@PathVariable String exchangeCode, @Valid @RequestBody OrderRequestDto orderRequestDto, @RequestHeader("sign") String signature) {
         GlobalExchangeResponse result = marketService.postOrder(exchangeCode, orderRequestDto, signature);
         return new GlobalDto<>(
@@ -67,7 +67,7 @@ public class MarketController {
         );
     }
 
-    @PostMapping("/book/order/both/{exchangeCode}")
+    @PostMapping("/api/v1/book/order/both/{exchangeCode}")
     public GlobalDto<List<OrderResponseDto>> ordermultiple(@PathVariable String exchangeCode, @Valid @RequestBody OrderMultipleRequestDto orderRequestDto, @RequestHeader("sign") String signature) {
         GlobaExchangeMultipleResponse result = marketService.postMultipleOrder(exchangeCode, orderRequestDto, signature);
         return new GlobalDto<>(
@@ -76,26 +76,26 @@ public class MarketController {
         );
     }
 
-    @PostMapping("/book/cancel")
+    @PostMapping("/api/v1/book/cancel")
     public GlobalDto<OrderResponseDto> cancel(@Valid @RequestBody Map<String, Long> orderId, @RequestHeader("sign") String signature) {
         GlobalExchangeResponse result = marketService.cancelOrder(orderId.get("orderId"), signature);
         return new GlobalDto<>(result.getError(), result.getResult());
     }
 
-    @GetMapping("/book/all/{page}/{limit}")
+    @GetMapping("/api/v1/book/all/{page}/{limit}")
     public GlobalDto<List<OrderResponseDto>> getAll(@PathVariable Integer page, @PathVariable Integer limit, @RequestHeader("sign") String signature) {
         List<OrderResponseDto> result = marketService.getAll(page, limit, signature);
         return new GlobalDto<>(null, result);
     }
 
 
-    @GetMapping("/book/by_status/{page}/{limit}/{status}")
+    @GetMapping("/api/v1/book/by_status/{page}/{limit}/{status}")
     public GlobalDto<List<OrderResponseDto>> getByStatus(@PathVariable @NotNull Integer page, @PathVariable @NotNull Integer limit, @PathVariable @Min(1) @Max(5) Integer status, @RequestHeader("sign") String signature) {
         List<OrderResponseDto> result = marketService.getAllByStatus(page, limit, status, signature);
         return new GlobalDto<>(null, result);
     }
 
-    @GetMapping("/book/by_id/{id}")
+    @GetMapping("/api/v1/book/by_id/{id}")
     public GlobalDto<OrderResponseDto> checkSuccess(@PathVariable Long id, @RequestHeader("sign") String signature) {
         OrderResponseDto result = marketService.getById(id, signature);
         return new GlobalDto<>(
@@ -104,12 +104,17 @@ public class MarketController {
         );
     }
 
-    @GetMapping("/book/detail/{id}")
+    @GetMapping("/api/v1/book/detail/{id}")
     public GlobalDto<Object> detail(@PathVariable Long id, @RequestHeader("sign") String signature) {
         Object result = marketService.getDetailOrder(id, signature);
         return new GlobalDto<>(
                 null,
                 result
         );
+    }
+
+    @GetMapping("/health_test")
+    public ResponseEntity<?> hello() {
+        return ResponseEntity.ok("success");
     }
 }
