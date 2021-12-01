@@ -24,7 +24,7 @@ class CoinsbitMarketDto {
         return MarketResponse.builder()
                 .data(data)
                 .exchangeCode(2)
-                .exhange("Coinsbit")
+                .exchange("Coinsbit")
                 .build();
     }
 }

@@ -25,7 +25,7 @@ public class HotbitTodayDto {
         return MarketResponse.builder()
                 .data(data)
                 .exchangeCode(1)
-                .exhange("Hotbit")
+                .exchange("Hotbit")
                 .build();
 
     }

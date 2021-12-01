@@ -8,7 +8,7 @@ import lombok.Data;
 @Builder
 @AllArgsConstructor
 public class MarketResponse {
-    private String exhange;
+    private String exchange;
 
     private Integer exchangeCode;
 
