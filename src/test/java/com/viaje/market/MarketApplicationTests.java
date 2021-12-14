@@ -179,9 +179,9 @@ class MarketApplicationTests {
         String signature = HmacValidator.generateSignature(SECRET, payload);
 
         JsonObject postBody = new JsonObject();
-        postBody.addProperty("amount", 5);
+        postBody.addProperty("amount", 2);
         postBody.addProperty("buyPercent", 50);
-        postBody.addProperty("profitPercent", 10);
+        postBody.addProperty("profitPercent", 1);
 
         JsonNode getRes = restUtil.postWithBody(url, signature, postBody);
 

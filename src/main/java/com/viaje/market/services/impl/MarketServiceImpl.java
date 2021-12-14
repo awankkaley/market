@@ -405,7 +405,7 @@ public class MarketServiceImpl implements MarketService {
         Double buyUsdAmount = Util.getBuyAmountByRation(orderRequestDto.getBuyPercent(), orderRequestDto.getAmount());
         log.info("Buy USD Amount : " + buyUsdAmount);
 
-        Double buyBsiAmount = Util.calculatetoBsiAmount(Double.valueOf(market.getResult().getLast()), buyUsdAmount, 4);
+        Double buyBsiAmount = Util.calculatetoBsiAmount(Double.valueOf(market.getResult().getLast()), buyUsdAmount, 6);
         log.info("Buy BSI Amount : " + buyBsiAmount);
 
         Double profitPrice = Util.calculateProfitPrice(Double.valueOf(market.getResult().getLast()), orderRequestDto.getProfitPercent(), 4);
@@ -414,7 +414,7 @@ public class MarketServiceImpl implements MarketService {
         Double sellUsdAmount = Util.getSellAmountFromRatio(orderRequestDto.getBuyPercent(), orderRequestDto.getAmount());
         log.info("Sell USD Amount : " + sellUsdAmount);
 
-        Double sellBsiAmount = Util.calculatetoBsiAmount(profitPrice, sellUsdAmount, 4);
+        Double sellBsiAmount = Util.calculatetoBsiAmount(profitPrice, sellUsdAmount, 6);
         log.info("Sell BSI Amount : " + sellBsiAmount);
 
         OrderEntity orderBuy = orderRepository.save(orderRequestDto.toOrderEntity(ConstantValue.EXCHANGE_COINSBIT, Double.valueOf(market.getResult().getLast()), ConstantValue.SIDE_BUY, buyBsiAmount));
