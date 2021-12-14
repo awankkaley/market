@@ -17,12 +17,12 @@ public class Scheduler {
         this.marketService = marketService;
     }
 
-    @Scheduled(fixedDelay = 60000)
+//    @Scheduled(fixedDelay = 60000)
     public void cronJobCheckStatus() {
         marketService.checkStatusPeriodically();
     }
 
-    @Scheduled(fixedDelay = 60000*60)
+//    @Scheduled(fixedDelay = 60000*60)
     public void cronJobPendingOrder() {
         marketService.createPendingOrder();
     }

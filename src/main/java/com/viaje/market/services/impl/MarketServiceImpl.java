@@ -276,14 +276,6 @@ public class MarketServiceImpl implements MarketService {
         if (orderRequestDto.getPrice() == null) {
             orderRequestDto.setPrice(Double.parseDouble(market.getResult().getLast()));
         }
-        // TODO: 10/09/21 for testing only
-//        if (orderRequestDto.getSide() == 1) {
-//            marketPrice = marketPrice + 0.1000;
-//        }
-//        if (orderRequestDto.getSide() == 2) {
-//            marketPrice = marketPrice - 0.1000;
-//        }
-        //<<<FOR TESTING ONLY
         OrderEntity order = orderRepository.save(orderRequestDto.toOrderEntity("hotbit", orderRequestDto.getPrice()));
         HotbitOrderResponseDto result = hotbitService.postOrder(orderRequestDto.getSide(), orderRequestDto.getAmount(), orderRequestDto.getPrice());
         if (result != null && result.getError() == null) {
@@ -295,16 +287,11 @@ public class MarketServiceImpl implements MarketService {
             OrderEntity result2 = orderRepository.save(order);
             return result2.toDto(null);
         } else {
-            HotbitErrorDto error = new HotbitErrorDto(9031, "failed to access hotbit");
             order.setStatus(ConstantValue.FAILED);
-            if (result != null) {
-                error.setCode(result.getError().getCode());
-                error.setMessage(result.getError().getMessage());
-            }
-            order.setInfo(error.getMessage());
+            order.setInfo("Failed to access hotbit");
             order.setValid(true);
             orderRepository.save(order);
-            throw new IllegalArgumentException(error.getMessage());
+            throw new IllegalArgumentException("Failed to access hotbit");
         }
     }
 
@@ -313,14 +300,6 @@ public class MarketServiceImpl implements MarketService {
         if (orderRequestDto.getPrice() == null) {
             orderRequestDto.setPrice(Double.parseDouble(market.getResult().getLast()));
         }
-        // TODO: 10/09/21 for testing only
-//        if (orderRequestDto.getSide() == 1) {
-//            marketPrice = marketPrice + 0.1000;
-//        }
-//        if (orderRequestDto.getSide() == 2) {
-//            marketPrice = marketPrice - 0.1000;
-//        }
-        //<<<FOR TESTING ONLY
         OrderEntity order = orderRepository.save(orderRequestDto.toOrderEntity("coinsbit", orderRequestDto.getPrice()));
         CoinsbitOrderDto result = coinsbitService.postOrder(orderRequestDto.getSide(), orderRequestDto.getAmount(), orderRequestDto.getPrice());
         if (result != null && result.isSuccess()) {
@@ -332,16 +311,11 @@ public class MarketServiceImpl implements MarketService {
             OrderEntity result2 = orderRepository.save(order);
             return result2.toDto(null);
         } else {
-            HotbitErrorDto error = new HotbitErrorDto(9031, "failed to access coinsbit");
             order.setStatus(ConstantValue.FAILED);
-            if (result != null) {
-                error.setCode(9031);
-                error.setMessage(result.getMessage());
-            }
-            order.setInfo(error.getMessage());
+            order.setInfo("Failed to access hotbit");
             order.setValid(true);
             orderRepository.save(order);
-            throw new IllegalArgumentException(error.getMessage());
+            throw new IllegalArgumentException("Failed to access hotbit");
         }
     }
 
@@ -385,15 +359,26 @@ public class MarketServiceImpl implements MarketService {
 
     private GlobaExchangeMultipleResponse postMultipleOrderHotbit(OrderMultipleRequestDto orderRequestDto) {
         HotbitTodayDto market = hotbitService.getMarketStatusToday();
-        if (orderRequestDto.getBuyPrice() == null) {
-            orderRequestDto.setBuyPrice(Double.parseDouble(market.getResult().getLast()));
-        }
-        if (orderRequestDto.getSellPrice() == null) {
-            orderRequestDto.setSellPrice(Double.parseDouble(market.getResult().getLast()));
-        }
-        OrderEntity orderBuy = orderRepository.save(orderRequestDto.toOrderEntity(ConstantValue.EXCHANGE_HOTBIT, orderRequestDto.getBuyPrice(), ConstantValue.SIDE_BUY, orderRequestDto.getBuyAmount()));
-        OrderEntity orderSell = orderRepository.save(orderRequestDto.toOrderEntity(ConstantValue.EXCHANGE_HOTBIT, orderRequestDto.getSellPrice(), ConstantValue.SIDE_SELL, orderRequestDto.getSellAmount()));
-        HotbitOrderResponseDto resultBuy = hotbitService.postOrder(ConstantValue.SIDE_BUY, orderRequestDto.getBuyAmount(), orderRequestDto.getBuyPrice());
+        log.info("Buy Current price : " + market.getResult().getLast());
+
+        Double buyUsdAmount = Util.getBuyAmountByRation(orderRequestDto.getBuyPercent(), orderRequestDto.getAmount());
+        log.info("Buy USD Amount : " + buyUsdAmount);
+
+        Double buyBsiAmount = Util.calculatetoBsiAmount(Double.valueOf(market.getResult().getLast()), buyUsdAmount, 2);
+        log.info("Buy BSI Amount : " + buyBsiAmount);
+
+        Double profitPrice = Util.calculateProfitPrice(Double.valueOf(market.getResult().getLast()), orderRequestDto.getProfitPercent(), 4);
+        log.info("Sell Profit Price : " + profitPrice);
+
+        Double sellUsdAmount = Util.getSellAmountFromRatio(orderRequestDto.getBuyPercent(), orderRequestDto.getAmount());
+        log.info("Sell USD Amount : " + sellUsdAmount);
+
+        Double sellBsiAmount = Util.calculatetoBsiAmount(profitPrice, sellUsdAmount, 2);
+        log.info("Sell BSI Amount : " + sellBsiAmount);
+
+        OrderEntity orderBuy = orderRepository.save(orderRequestDto.toOrderEntity(ConstantValue.EXCHANGE_HOTBIT, Double.valueOf(market.getResult().getLast()), ConstantValue.SIDE_BUY, buyBsiAmount));
+        OrderEntity orderSell = orderRepository.save(orderRequestDto.toOrderEntity(ConstantValue.EXCHANGE_HOTBIT, profitPrice, ConstantValue.SIDE_SELL, sellBsiAmount));
+        HotbitOrderResponseDto resultBuy = hotbitService.postOrder(ConstantValue.SIDE_BUY, buyBsiAmount, Double.valueOf(market.getResult().getLast()));
         if (resultBuy == null) {
             updateStatusFailed(orderBuy);
             updateStatusFailed(orderSell);
@@ -401,36 +386,49 @@ public class MarketServiceImpl implements MarketService {
         } else {
             orderBuy = updateStatusSuccess(orderBuy, resultBuy);
         }
-        HotbitOrderResponseDto resultSell = hotbitService.postOrder(ConstantValue.SIDE_SELL, orderRequestDto.getSellAmount(), orderRequestDto.getSellPrice());
-        if (resultSell == null) {
+        HotbitOrderResponseDto resultSell = hotbitService.postOrder(ConstantValue.SIDE_SELL, sellBsiAmount, profitPrice);
+        if (resultSell.getResult() == null) {
             orderSell = updateStatusPending(orderSell);
         } else {
             orderSell = updateStatusSuccess(orderSell, resultSell);
         }
         OrderResponseDto dataBuy = orderBuy.toDtoList();
         OrderResponseDto dataSell = orderSell.toDtoList();
+
         return new GlobaExchangeMultipleResponse(null, Arrays.asList(dataBuy, dataSell));
     }
 
     private GlobaExchangeMultipleResponse postMultipleOrderCoinsbit(OrderMultipleRequestDto orderRequestDto) {
         CoinsbitMarketDto market = coinsbitService.getMarketStatusToday();
-        if (orderRequestDto.getBuyPrice() == null) {
-            orderRequestDto.setBuyPrice(Double.parseDouble(market.getResult().getLast()));
-        }
-        if (orderRequestDto.getSellPrice() == null) {
-            orderRequestDto.setSellPrice(Double.parseDouble(market.getResult().getLast()));
-        }
-        OrderEntity orderBuy = orderRepository.save(orderRequestDto.toOrderEntity(ConstantValue.EXCHANGE_COINSBIT, orderRequestDto.getBuyPrice(), ConstantValue.SIDE_BUY, orderRequestDto.getBuyAmount()));
-        OrderEntity orderSell = orderRepository.save(orderRequestDto.toOrderEntity(ConstantValue.EXCHANGE_COINSBIT, orderRequestDto.getSellPrice(), ConstantValue.SIDE_SELL, orderRequestDto.getSellAmount()));
-        CoinsbitOrderDto resultBuy = coinsbitService.postOrder(ConstantValue.SIDE_BUY, orderRequestDto.getBuyAmount(), orderRequestDto.getBuyPrice());
+        log.info("Buy Current price : " + market.getResult().getLast());
+
+        Double buyUsdAmount = Util.getBuyAmountByRation(orderRequestDto.getBuyPercent(), orderRequestDto.getAmount());
+        log.info("Buy USD Amount : " + buyUsdAmount);
+
+        Double buyBsiAmount = Util.calculatetoBsiAmount(Double.valueOf(market.getResult().getLast()), buyUsdAmount, 4);
+        log.info("Buy BSI Amount : " + buyBsiAmount);
+
+        Double profitPrice = Util.calculateProfitPrice(Double.valueOf(market.getResult().getLast()), orderRequestDto.getProfitPercent(), 4);
+        log.info("Sell Profit Price : " + profitPrice);
+
+        Double sellUsdAmount = Util.getSellAmountFromRatio(orderRequestDto.getBuyPercent(), orderRequestDto.getAmount());
+        log.info("Sell USD Amount : " + sellUsdAmount);
+
+        Double sellBsiAmount = Util.calculatetoBsiAmount(profitPrice, sellUsdAmount, 4);
+        log.info("Sell BSI Amount : " + sellBsiAmount);
+
+        OrderEntity orderBuy = orderRepository.save(orderRequestDto.toOrderEntity(ConstantValue.EXCHANGE_COINSBIT, Double.valueOf(market.getResult().getLast()), ConstantValue.SIDE_BUY, buyBsiAmount));
+        OrderEntity orderSell = orderRepository.save(orderRequestDto.toOrderEntity(ConstantValue.EXCHANGE_COINSBIT, profitPrice, ConstantValue.SIDE_SELL, sellBsiAmount));
+        CoinsbitOrderDto resultBuy = coinsbitService.postOrder(ConstantValue.SIDE_BUY, buyBsiAmount, Double.valueOf(market.getResult().getLast()));
+        log.info("Buy Response : " + resultBuy);
         if (resultBuy == null) {
             updateStatusFailed(orderBuy);
             updateStatusFailed(orderSell);
-            throw new IllegalArgumentException("Failed to access Hotbit");
+            throw new IllegalArgumentException("Failed to access Coinsbit");
         } else {
             orderBuy = updateStatusSuccessCoinsbit(orderBuy, resultBuy);
         }
-        CoinsbitOrderDto resultSell = coinsbitService.postOrder(ConstantValue.SIDE_SELL, orderRequestDto.getSellAmount(), orderRequestDto.getSellPrice());
+        CoinsbitOrderDto resultSell = coinsbitService.postOrder(ConstantValue.SIDE_SELL, sellBsiAmount, profitPrice);
         if (resultSell == null) {
             orderSell = updateStatusPending(orderSell);
         } else {
