@@ -14,14 +14,15 @@ import javax.validation.constraints.NotNull;
 @Builder
 public class OrderMultipleRequestDto {
 
-    @NotNull(message = "Please provide a amount")
-    private Double amount;
+    @NotNull(message = "Please provide a buy amount")
+    private Double buyAmount;
 
-    @NotNull(message = "Please provide a buy ratio")
-    private Integer buyPercent;
+    @NotNull(message = "Please provide a sell amount")
+    private Double sellAmount;
 
-    private Double price;
+    private Double buyPrice;
 
+    private Double sellPrice;
 
     public OrderEntity toOrderEntity(String exchangeCode, Double price, String side, Double amount) {
         return OrderEntity.builder()

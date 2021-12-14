@@ -1,9 +1,5 @@
 package com.viaje.market.util;
 
-import com.viaje.market.config.api_key.ApiKeyConfiguration;
-import com.viaje.market.dtos.CoinsbitSignature;
-import lombok.AllArgsConstructor;
-
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
@@ -12,7 +8,6 @@ import java.util.Base64;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
-import static sun.security.pkcs11.wrapper.Functions.toHexString;
 
 public class HmacValidator {
 

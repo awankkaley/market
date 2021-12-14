@@ -174,12 +174,12 @@ class MarketApplicationTests {
     void twoSideCoinsbit() throws JsonProcessingException {
         String url = BASE_URL + "/api/v1/book/order/both/coinsbit";
 
-        String payload = "x-api-key=" + API_KEY + "&exchange=coinsbit" + "&amount=2.0";
+        String payload = "x-api-key=" + API_KEY + "&exchange=coinsbit" ;
         String signature = HmacValidator.generateSignature(SECRET, payload);
 
         JsonObject postBody = new JsonObject();
-        postBody.addProperty("buyPercent", 50);
-        postBody.addProperty("amount", 2.0);
+        postBody.addProperty("buyAmount", 1.0);
+        postBody.addProperty("sellAmount", 1.0);
 
         JsonNode getRes = restUtil.postWithBody(url, signature, postBody);
 
@@ -192,12 +192,12 @@ class MarketApplicationTests {
     void twoSideHotbit() throws JsonProcessingException {
         String url = BASE_URL + "/api/v1/book/order/both/hotbit";
 
-        String payload = "x-api-key=" + API_KEY + "&exchange=hotbit" + "&amount=2.0";
+        String payload = "x-api-key=" + API_KEY + "&exchange=hotbit" ;
         String signature = HmacValidator.generateSignature(SECRET, payload);
 
         JsonObject postBody = new JsonObject();
-        postBody.addProperty("buyPercent", 50);
-        postBody.addProperty("amount", 2.0);
+        postBody.addProperty("buyAmount", 1.0);
+        postBody.addProperty("sellAmount", 1.0);
 
         JsonNode getRes = restUtil.postWithBody(url, signature, postBody);
 
