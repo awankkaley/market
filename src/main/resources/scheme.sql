@@ -50,7 +50,7 @@ create table hotbit_data
 
 create table order_data
 (
-    id                bigint not null auto_increment,
+    id                bigint  not null auto_increment,
     created_date      timestamp,
     modified_date     timestamp,
     amount            double,
@@ -64,6 +64,17 @@ create table order_data
     status            integer,
     primary key (id)
 )
+
+create table market_setup_entity
+(
+    id             bigint not null auto_increment,
+    created_date   datetime(6),
+    modified_date  datetime(6),
+    buy_percent    integer,
+    profit_percent integer,
+    primary key (id)
+) engine=InnoDB
+
 
 
 

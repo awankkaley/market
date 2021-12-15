@@ -12,16 +12,14 @@ import com.viaje.market.dtos.response.BalanceResponseDto;
 import com.viaje.market.dtos.response.MarketResponse;
 import com.viaje.market.entities.CoinsbitEntity;
 import com.viaje.market.entities.HotbitEntity;
+import com.viaje.market.entities.MarketSetupEntity;
 import com.viaje.market.entities.OrderEntity;
 import com.viaje.market.repositories.CoinbitRepository;
 import com.viaje.market.repositories.HotbitRepository;
 import com.viaje.market.repositories.OrderRepository;
 import com.viaje.market.config.api_key.ApiKeyConfiguration;
 import com.viaje.market.dtos.*;
-import com.viaje.market.services.CoinsbitService;
-import com.viaje.market.services.HotbitService;
-import com.viaje.market.services.MarketService;
-import com.viaje.market.services.SignatureService;
+import com.viaje.market.services.*;
 import com.viaje.market.util.ConstantValue;
 import com.viaje.market.util.Util;
 import lombok.AllArgsConstructor;
@@ -48,6 +46,7 @@ public class MarketServiceImpl implements MarketService {
     private final SignatureService signatureService;
     private final OrderRepository orderRepository;
     private final ApiKeyConfiguration apiKeyConfiguration;
+    private final MarketSetupService marketSetupService;
 
     @Override
     public BalanceResponseDto getBalance(String exchange, String signature) {
@@ -358,19 +357,20 @@ public class MarketServiceImpl implements MarketService {
     }
 
     private GlobaExchangeMultipleResponse postMultipleOrderHotbit(OrderMultipleRequestDto orderRequestDto) {
+        MarketSetupEntity marketSetupEntity = marketSetupService.getSetup().get(0);
         HotbitTodayDto market = hotbitService.getMarketStatusToday();
         log.info("Buy Current price : " + market.getResult().getLast());
 
-        Double buyUsdAmount = Util.getBuyAmountByRation(orderRequestDto.getBuyPercent(), orderRequestDto.getAmount());
+        Double buyUsdAmount = Util.getBuyAmountByRation(marketSetupEntity.getBuyPercent(), orderRequestDto.getAmount());
         log.info("Buy USD Amount : " + buyUsdAmount);
 
         Double buyBsiAmount = Util.calculatetoBsiAmount(Double.valueOf(market.getResult().getLast()), buyUsdAmount, 2);
         log.info("Buy BSI Amount : " + buyBsiAmount);
 
-        Double profitPrice = Util.calculateProfitPrice(Double.valueOf(market.getResult().getLast()), orderRequestDto.getProfitPercent(), 4);
+        Double profitPrice = Util.calculateProfitPrice(Double.valueOf(market.getResult().getLast()), marketSetupEntity.getProfitPercent(), 4);
         log.info("Sell Profit Price : " + profitPrice);
 
-        Double sellUsdAmount = Util.getSellAmountFromRatio(orderRequestDto.getBuyPercent(), orderRequestDto.getAmount());
+        Double sellUsdAmount = Util.getSellAmountFromRatio(marketSetupEntity.getBuyPercent(), orderRequestDto.getAmount());
         log.info("Sell USD Amount : " + sellUsdAmount);
 
         Double sellBsiAmount = Util.calculatetoBsiAmount(profitPrice, sellUsdAmount, 2);
@@ -399,19 +399,20 @@ public class MarketServiceImpl implements MarketService {
     }
 
     private GlobaExchangeMultipleResponse postMultipleOrderCoinsbit(OrderMultipleRequestDto orderRequestDto) {
+        MarketSetupEntity marketSetupEntity = marketSetupService.getSetup().get(0);
         CoinsbitMarketDto market = coinsbitService.getMarketStatusToday();
         log.info("Buy Current price : " + market.getResult().getLast());
 
-        Double buyUsdAmount = Util.getBuyAmountByRation(orderRequestDto.getBuyPercent(), orderRequestDto.getAmount());
+        Double buyUsdAmount = Util.getBuyAmountByRation(marketSetupEntity.getBuyPercent(), orderRequestDto.getAmount());
         log.info("Buy USD Amount : " + buyUsdAmount);
 
         Double buyBsiAmount = Util.calculatetoBsiAmount(Double.valueOf(market.getResult().getLast()), buyUsdAmount, 6);
         log.info("Buy BSI Amount : " + buyBsiAmount);
 
-        Double profitPrice = Util.calculateProfitPrice(Double.valueOf(market.getResult().getLast()), orderRequestDto.getProfitPercent(), 4);
+        Double profitPrice = Util.calculateProfitPrice(Double.valueOf(market.getResult().getLast()), marketSetupEntity.getProfitPercent(), 4);
         log.info("Sell Profit Price : " + profitPrice);
 
-        Double sellUsdAmount = Util.getSellAmountFromRatio(orderRequestDto.getBuyPercent(), orderRequestDto.getAmount());
+        Double sellUsdAmount = Util.getSellAmountFromRatio(marketSetupEntity.getBuyPercent(), orderRequestDto.getAmount());
         log.info("Sell USD Amount : " + sellUsdAmount);
 
         Double sellBsiAmount = Util.calculatetoBsiAmount(profitPrice, sellUsdAmount, 6);

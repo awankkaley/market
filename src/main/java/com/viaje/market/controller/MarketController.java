@@ -9,7 +9,9 @@ import com.viaje.market.dtos.hotbit_order.OrderRequestDto;
 import com.viaje.market.dtos.hotbit_order.OrderResponseDto;
 import com.viaje.market.dtos.response.BalanceResponseDto;
 import com.viaje.market.dtos.response.MarketResponse;
+import com.viaje.market.entities.MarketSetupEntity;
 import com.viaje.market.services.MarketService;
+import com.viaje.market.services.MarketSetupService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +31,26 @@ import java.util.Map;
 @Validated
 public class MarketController {
     private final MarketService marketService;
+    private final MarketSetupService marketSetupService;
+
+    @GetMapping("/api/v1/setup")
+    public GlobalDto<MarketSetupEntity> setup() {
+        MarketSetupEntity result = marketSetupService.getSetup().get(0);
+        return new GlobalDto<>(
+                null,
+                result
+        );
+    }
+
+    @PutMapping("/api/v1/setup")
+    public GlobalDto<String> update(@Valid @RequestBody MarketSetupRequestDto requestDto) {
+        MarketSetupEntity existing = marketSetupService.getSetup().get(0);
+        marketSetupService.updateSetup(requestDto, existing.getId());
+        return new GlobalDto<>(
+                null,
+                "Success"
+        );
+    }
 
 
     @GetMapping("/api/v1/balance/{exchangeCode}")
