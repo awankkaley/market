@@ -37,6 +37,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
+                .headers()
+                .frameOptions()
+                .sameOrigin()
+                .and()
                 .addFilterBefore(new ApiKeyAuthenticationFilter(authenticationManager(), apiKeyConfiguration), UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
                 .antMatchers("/health_test").permitAll() // hello
@@ -44,7 +48,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticated()
                 .and()
                 .exceptionHandling()
-                .authenticationEntryPoint(new AuthenticationExceptionEntryPoint(handlerExceptionResolver));
+                .authenticationEntryPoint(new AuthenticationExceptionEntryPoint(handlerExceptionResolver))
+                .and()
+                .cors();
     }
 
     @Override
@@ -55,7 +61,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         final CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:8080", "https://localhost:8080","https://dev-api-ro7y2hfom5eqifu.viaje.id"));
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:8080", "https://localhost:8080", "https://dev-api-ro7y2hfom5eqifu.viaje.id"));
         configuration.setAllowedMethods(Arrays.asList("HEAD",
                 "GET", "POST", "PUT", "DELETE", "PATCH"));
         // setAllowCredentials(true) is important, otherwise:

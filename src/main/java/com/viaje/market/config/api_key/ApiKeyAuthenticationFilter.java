@@ -26,7 +26,6 @@ public class ApiKeyAuthenticationFilter extends AbstractAuthenticationProcessing
     @Override
     public Authentication attemptAuthentication(
             HttpServletRequest request, HttpServletResponse response) {
-        log.debug("APIKEY : ");
         String apiKeyOptional = request.getHeader(apiKeyConfiguration.getPrincipalRequestHeader());
         ApiKeyAuthenticationToken token = new ApiKeyAuthenticationToken(apiKeyOptional);
         return getAuthenticationManager().authenticate(token);

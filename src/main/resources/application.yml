@@ -3,23 +3,45 @@
 
 spring:
   profiles:
-    active: local  # set local env as basic
-  datasource:
-    hikari:
-      jdbc-url: jdbc:h2:tcp://localhost:9091/mem:testdb;MODE=MYSQL
-      enable_h2_console: true
-      username: sa
-      password:
-  jpa:
-    database-platform: H2
-    show-sql: true
-    hibernate:
-      ddl-auto: update
+    active: local
+    group:
+      "local": "localDB, common"
 ---
 spring:
   profiles:
     group:
       "development": "developmentDB, common"
+
+---
+spring:
+  config:
+    activate:
+      on-profile: "localDB"
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  datasource:
+    hikari:
+      jdbc-url: jdbc:h2:tcp://localhost:9091/mem:testdb;MODE=MYSQL;DATABASE_TO_LOWER=true;
+      username: sa
+      password:
+
+  jpa:
+    database-platform: H2
+    show-sql: true
+    #    properties:
+    #      hibernate:
+    #        format_sql: true
+    hibernate:
+      #      ddl-auto: none
+      ddl-auto: update
+
+  sql:
+    init:
+      mode: ALWAYS
 ---
 spring:
   config:
@@ -40,6 +62,22 @@ spring:
     init:
       mode: NEVER
 
+---
+spring:
+  config:
+    activate:
+      on-profile: "common"
+
+  data:
+    rest:
+      base-path: /v1
+
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MariaDB103Dialect
+        storage_engine: innodb
+
 appication:
   api-key:
     properties:
@@ -56,7 +94,7 @@ appication:
 
 logging.level.org.apache.http: DEBUG
 logging.level.httpclient.wire: DEBUG
-logging.level.root: info
+#logging.level.root: info
 
 
 spring.jpa.properties.hibernate.dialect: org.hibernate.dialect.MySQL57Dialect

@@ -36,7 +36,7 @@ class MarketApplicationTests {
 
         JsonNode getRes = restUtil.getRequestWithToken(url, signature);
 
-        logger.info("get res::{}", getRes.asText());
+        logger.info("get res::{}", getRes);
 
         assertThat(getRes.get("result").get("exchange").textValue()).isEqualTo("Coinsbit");
     }
@@ -50,7 +50,7 @@ class MarketApplicationTests {
 
         JsonNode getRes = restUtil.getRequestWithToken(url, signature);
 
-        logger.info("get res::{}", getRes.asText());
+        logger.info("get res::{}", getRes);
 
         assertThat(getRes.get("result").get("exchange").textValue()).isEqualTo("Hotbit");
     }
@@ -64,9 +64,9 @@ class MarketApplicationTests {
 
         JsonNode getRes = restUtil.getRequestWithToken(url, signature);
 
-        logger.info("get res::{}", getRes.get("result").get("exhange").textValue());
+        logger.info("get res::{}", getRes);
 
-        assertThat(getRes.get("result").get("exhange").textValue()).isEqualTo("Coinsbit");
+        assertThat(getRes.get("result").get("exchange").textValue()).isEqualTo("Coinsbit");
     }
 
     @Test
@@ -78,9 +78,9 @@ class MarketApplicationTests {
 
         JsonNode getRes = restUtil.getRequestWithToken(url, signature);
 
-        logger.info("get res::{}", getRes.asText());
+        logger.info("get res::{}", getRes);
 
-        assertThat(getRes.get("result").get("exhange").textValue()).isEqualTo("Hotbit");
+        assertThat(getRes.get("result").get("exchange").textValue()).isEqualTo("Hotbit");
     }
 
     @Test
@@ -93,7 +93,7 @@ class MarketApplicationTests {
 
         JsonNode getRes = restUtil.getRequestWithToken(url, signature);
 
-        logger.info("get res::{}", getRes.asText());
+        logger.info("get res::{}", getRes);
 
         assertThat(String.valueOf(getRes.get("result").get("period").intValue())).isEqualTo(periode);
     }
@@ -112,7 +112,7 @@ class MarketApplicationTests {
 
         JsonNode getRes = restUtil.postWithBody(url, signature, postBody);
 
-        logger.info("get res::{}", getRes.asText());
+        logger.info("get res::{}", getRes);
 
         assertThat(getRes.get("result").get("exchangeCode").textValue()).isEqualTo("coinsbit");
     }
@@ -130,7 +130,7 @@ class MarketApplicationTests {
 
         JsonNode getRes = restUtil.postWithBody(url, signature, postBody);
 
-        logger.info("get res::{}", getRes.asText());
+        logger.info("get res::{}", getRes);
 
         assertThat(getRes.get("result").get("exchangeCode").textValue()).isEqualTo("coinsbit");
     }
@@ -148,7 +148,7 @@ class MarketApplicationTests {
 
         JsonNode getRes = restUtil.postWithBody(url, signature, postBody);
 
-        logger.info("get res::{}", getRes.asText());
+        logger.info("get res::{}", getRes);
 
         assertThat(getRes.get("result").get("exchangeCode").textValue()).isEqualTo("hotbit");
     }
@@ -166,7 +166,7 @@ class MarketApplicationTests {
 
         JsonNode getRes = restUtil.postWithBody(url, signature, postBody);
 
-        logger.info("get res::{}", getRes.asText());
+        logger.info("get res::{}", getRes);
 
         assertThat(getRes.get("result").get("exchangeCode").textValue()).isEqualTo("hotbit");
     }
@@ -185,7 +185,7 @@ class MarketApplicationTests {
 
         JsonNode getRes = restUtil.postWithBody(url, signature, postBody);
 
-        logger.info("get res::{}", getRes.asText());
+        logger.info("get res::{}", getRes);
 
         assertThat(getRes.get("error").textValue()).isEqualTo(null);
     }
@@ -205,7 +205,7 @@ class MarketApplicationTests {
 
         JsonNode getRes = restUtil.postWithBody(url, signature, postBody);
 
-        logger.info("get res::{}", getRes.asText());
+        logger.info("get res::{}", getRes);
 
         assertThat(getRes.get("error").textValue()).isEqualTo(null);
     }
@@ -220,7 +220,7 @@ class MarketApplicationTests {
 
         JsonNode getRes = restUtil.getRequestWithToken(url, signature);
 
-        logger.info("get res::{}", getRes.asText());
+        logger.info("get res::{}", getRes);
 
         assertThat(getRes.get("error").textValue()).isEqualTo(null);
 
@@ -235,7 +235,7 @@ class MarketApplicationTests {
 
         JsonNode getRes = restUtil.getRequestWithToken(url, signature);
 
-        logger.info("get res::{}", getRes.asText());
+        logger.info("get res::{}", getRes);
 
         assertThat(getRes.get("error").textValue()).isEqualTo(null);
 
@@ -250,7 +250,7 @@ class MarketApplicationTests {
 
         JsonNode getRes = restUtil.getRequestWithToken(url, signature);
 
-        logger.info("get res::{}", getRes.asText());
+        logger.info("get res::{}", getRes);
 
         assertThat(getRes.get("error").textValue()).isEqualTo(null);
 
@@ -265,7 +265,7 @@ class MarketApplicationTests {
 
         JsonNode getRes = restUtil.getRequestWithToken(url, signature);
 
-        logger.info("get res::{}", getRes.asText());
+        logger.info("get res::{}", getRes);
 
         assertThat(getRes.get("error").textValue()).isEqualTo(null);
 
@@ -283,7 +283,7 @@ class MarketApplicationTests {
 
         JsonNode getRes = restUtil.postWithBody(url, signature, postBody);
 
-        logger.info("get res::{}", getRes.asText());
+        logger.info("get res::{}", getRes);
 
         assertThat(getRes.get("error").textValue()).isEqualTo(null);
 

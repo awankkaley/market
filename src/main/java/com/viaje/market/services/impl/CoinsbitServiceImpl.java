@@ -42,7 +42,6 @@ public class CoinsbitServiceImpl implements CoinsbitService {
 
     @Override
     public CoinsbitBalanceDto getBalance() {
-        CoinsbitBalanceDto coinsbitBalanceDto = null;
         String request = "/api/v1/account/balances";
         String fullUrl = ConstantValue.BASE_URL + request;
         try {
@@ -59,27 +58,25 @@ public class CoinsbitServiceImpl implements CoinsbitService {
             HttpEntity<Map<String, Object>> entity = new HttpEntity<>(json, headers);
             ResponseEntity<String> response = restTemplate.postForEntity(fullUrl, entity, String.class);
             ObjectMapper om = new ObjectMapper();
-            coinsbitBalanceDto = om.readValue(response.getBody(), CoinsbitBalanceDto.class);
+            return om.readValue(response.getBody(), CoinsbitBalanceDto.class);
         } catch (HttpClientErrorException e) {
             try {
                 JsonNode error = new ObjectMapper().readValue(e.getResponseBodyAsString(), JsonNode.class);
                 log.error(error.toString());
-                throw new IllegalArgumentException("Failed to Access Coinsbit");
+                throw new IllegalArgumentException(e.getMessage());
             } catch (IOException mappingExp) {
                 log.error(mappingExp.getMessage());
-                throw new IllegalArgumentException("Failed to Access Coinsbit");
+                throw new IllegalArgumentException(e.getMessage());
             }
         } catch (Exception exp) {
             log.error(exp.getMessage());
-            throw new IllegalArgumentException("Failed to Access Coinsbit");
+            throw new IllegalArgumentException(exp.getMessage());
 
         }
-        return coinsbitBalanceDto;
     }
 
     @Override
     public CoinsbitMarketDto getMarketStatusToday() {
-        CoinsbitMarketDto coinsbitMarketDto = null;
         String request = "/api/v1/public/ticker";
         String fullUrl = ConstantValue.BASE_URL + request;
         try {
@@ -97,29 +94,26 @@ public class CoinsbitServiceImpl implements CoinsbitService {
             HttpEntity<Map<String, Object>> entity = new HttpEntity<>(json, headers);
             ResponseEntity<String> response = restTemplate.postForEntity(fullUrl, entity, String.class);
             ObjectMapper om = new ObjectMapper();
-            coinsbitMarketDto = om.readValue(response.getBody(), CoinsbitMarketDto.class);
-            log.error("----RESPONSE---" + coinsbitMarketDto);
+            return om.readValue(response.getBody(), CoinsbitMarketDto.class);
         } catch (HttpClientErrorException e) {
             try {
                 JsonNode error = new ObjectMapper().readValue(e.getResponseBodyAsString(), JsonNode.class);
                 log.error(error.toString());
-                throw new IllegalArgumentException("Failed to Access Coinsbit");
+                throw new IllegalArgumentException(e.getMessage());
             } catch (IOException mappingExp) {
                 log.error(mappingExp.getMessage());
-                throw new IllegalArgumentException("Failed to Access Coinsbit");
+                throw new IllegalArgumentException(e.getMessage());
             }
         } catch (Exception exp) {
             log.error(exp.getMessage());
-            throw new IllegalArgumentException("Failed to Access Coinsbit");
+            throw new IllegalArgumentException(exp.getMessage());
 
         }
-        return coinsbitMarketDto;
     }
 
 
     @Override
     public CoinsbitOrderDto postOrder(String side, Double amount, Double price) {
-        CoinsbitOrderDto coinsbitOrderDto = null;
         String request = "/api/v1/order/new";
         String fullUrl = ConstantValue.BASE_URL + request;
         try {
@@ -142,11 +136,12 @@ public class CoinsbitServiceImpl implements CoinsbitService {
             ObjectMapper om = new ObjectMapper();
             String cleanResponse = Objects.requireNonNull(response.getBody()).replace("[[", "").replace("]]", "").replace("[]", "null");
             log.error("--RESPONSE-- : " + cleanResponse);
-            coinsbitOrderDto = om.readValue(cleanResponse, CoinsbitOrderDto.class);
+            CoinsbitOrderDto coinsbitOrderDto = om.readValue(cleanResponse, CoinsbitOrderDto.class);
             if (!coinsbitOrderDto.isSuccess()) {
                 return null;
             } else {
                 coinbitRepository.save(coinsbitOrderDto.getResult().toEntity());
+                return coinsbitOrderDto;
             }
         } catch (HttpClientErrorException e) {
             try {
@@ -161,12 +156,10 @@ public class CoinsbitServiceImpl implements CoinsbitService {
             log.error(exp.getMessage());
             return null;
         }
-        return coinsbitOrderDto;
     }
 
     @Override
     public CoinsbitOrderDto cancelOrder(Long orderId) {
-        CoinsbitOrderDto coinsbitOrderDto = null;
         String request = "/api/v1/order/cancel";
         String fullUrl = ConstantValue.BASE_URL + request;
         try {
@@ -185,27 +178,25 @@ public class CoinsbitServiceImpl implements CoinsbitService {
             HttpEntity<Map<String, Object>> entity = new HttpEntity<>(json, headers);
             ResponseEntity<String> response = restTemplate.postForEntity(fullUrl, entity, String.class);
             ObjectMapper om = new ObjectMapper();
-            coinsbitOrderDto = om.readValue(Objects.requireNonNull(response.getBody()).replace("[]", "null"), CoinsbitOrderDto.class);
+            return om.readValue(Objects.requireNonNull(response.getBody()).replace("[]", "null"), CoinsbitOrderDto.class);
         } catch (HttpClientErrorException e) {
             try {
                 JsonNode error = new ObjectMapper().readValue(e.getResponseBodyAsString(), JsonNode.class);
                 log.error(error.toString());
-                throw new IllegalArgumentException("Failed to Access Coinsbit");
+                throw new IllegalArgumentException(e.getMessage());
             } catch (IOException mappingExp) {
                 log.error(mappingExp.getMessage());
-                throw new IllegalArgumentException("Failed to Access Coinsbit");
+                throw new IllegalArgumentException(e.getMessage());
             }
         } catch (Exception exp) {
             log.error(exp.getMessage());
-            throw new IllegalArgumentException("Failed to Access Coinsbit");
+            throw new IllegalArgumentException(exp.getMessage());
 
         }
-        return coinsbitOrderDto;
     }
 
     @Override
     public CoinsbitStatusDto checkSuccessStatus(Long orderId) {
-        CoinsbitStatusDto coinsbitStatusDto = null;
         String request = "/api/v1/account/trades";
         String fullUrl = ConstantValue.BASE_URL + request;
         try {
@@ -225,21 +216,19 @@ public class CoinsbitServiceImpl implements CoinsbitService {
             HttpEntity<Map<String, Object>> entity = new HttpEntity<>(json, headers);
             ResponseEntity<String> response = restTemplate.postForEntity(fullUrl, entity, String.class);
             ObjectMapper om = new ObjectMapper();
-            coinsbitStatusDto = om.readValue(Objects.requireNonNull(response.getBody()).replace("[]", "null"), CoinsbitStatusDto.class);
+            return om.readValue(Objects.requireNonNull(response.getBody()).replace("[]", "null"), CoinsbitStatusDto.class);
         } catch (HttpClientErrorException e) {
             try {
                 JsonNode error = new ObjectMapper().readValue(e.getResponseBodyAsString(), JsonNode.class);
                 log.error(error.toString());
-                throw new IllegalArgumentException("Failed to Access Coinsbit");
+                throw new IllegalArgumentException(e.getMessage());
             } catch (IOException mappingExp) {
                 log.error(mappingExp.getMessage());
-                throw new IllegalArgumentException("Failed to Access Coinsbit");
+                throw new IllegalArgumentException(e.getMessage());
             }
         } catch (Exception exp) {
             log.error(exp.getMessage());
-            throw new IllegalArgumentException("Failed to Access Coinsbit");
-
+            throw new IllegalArgumentException(exp.getMessage());
         }
-        return coinsbitStatusDto;
     }
 }

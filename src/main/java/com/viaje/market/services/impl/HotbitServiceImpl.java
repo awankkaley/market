@@ -39,34 +39,31 @@ public class HotbitServiceImpl implements HotbitService {
 
     @Override
     public HotbitBalanceDto getBalance() {
-        HotbitBalanceDto hotbitBalanceDto = null;
         try {
             String data = "api_key=" + hotbitConfiguration.getKey() + "&assets=[]";
             String sign = SignatureUtil.GenerateSignatureHotbit(data, hotbitConfiguration);
             String url = "https://api.hotbit.io/v2/p2/balance.query?api_key=" + hotbitConfiguration.getKey() + "&" + data + "&sign=" + sign;
             String response = restTemplate.getForObject(url, String.class);
             ObjectMapper om = new ObjectMapper();
-            hotbitBalanceDto = om.readValue(response, HotbitBalanceDto.class);
+            return om.readValue(response, HotbitBalanceDto.class);
         } catch (HttpClientErrorException e) {
             try {
                 JsonNode error = new ObjectMapper().readValue(e.getResponseBodyAsString(), JsonNode.class);
                 log.error(error.toString());
-                throw new IllegalArgumentException("Failed to access Hotbit");
+                throw new IllegalArgumentException(e.getMessage());
             } catch (IOException mappingExp) {
                 log.error(mappingExp.getMessage());
-                throw new IllegalArgumentException("Failed to access Hotbit");
+                throw new IllegalArgumentException(e.getMessage());
             }
         } catch (Exception exp) {
             log.error(exp.getMessage());
-            throw new IllegalArgumentException("Failed to access Hotbit");
+            throw new IllegalArgumentException(exp.getMessage());
 
         }
-        return hotbitBalanceDto;
     }
 
     @Override
     public HotbitTodayDto getMarketStatusToday() {
-        HotbitTodayDto hotbitTodayDto = null;
         try {
             HttpHeaders headers = new HttpHeaders();
             headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
@@ -74,26 +71,24 @@ public class HotbitServiceImpl implements HotbitService {
                     .queryParam("market", "BSI/USDT");
             String response = restTemplate.getForObject(uriBuilder.toUriString(), String.class, headers);
             ObjectMapper om = new ObjectMapper();
-            hotbitTodayDto = om.readValue(response, HotbitTodayDto.class);
+            return om.readValue(response, HotbitTodayDto.class);
         } catch (HttpClientErrorException e) {
             try {
                 JsonNode error = new ObjectMapper().readValue(e.getResponseBodyAsString(), JsonNode.class);
                 log.error(error.toString());
-                throw new IllegalArgumentException("Failed to access Hotbit");
+                throw new IllegalArgumentException(e.getMessage());
             } catch (IOException mappingExp) {
                 log.error(mappingExp.getMessage());
-                throw new IllegalArgumentException("Failed to access Hotbit");
+                throw new IllegalArgumentException(e.getMessage());
             }
         } catch (Exception exp) {
             log.error(exp.getMessage());
-            throw new IllegalArgumentException("Failed to access Hotbit");
+            throw new IllegalArgumentException(exp.getMessage());
         }
-        return hotbitTodayDto;
     }
 
     @Override
     public HotbitPeriodDto getMarketStatusByPeriode(Integer periode) {
-        HotbitPeriodDto hotbitPeriodDto = null;
         try {
             HttpHeaders headers = new HttpHeaders();
             headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
@@ -102,27 +97,25 @@ public class HotbitServiceImpl implements HotbitService {
                     .queryParam("market", "BSI/USDT");
             String response = restTemplate.getForObject(uriBuilder.toUriString(), String.class, headers);
             ObjectMapper om = new ObjectMapper();
-            hotbitPeriodDto = om.readValue(response, HotbitPeriodDto.class);
+            return om.readValue(response, HotbitPeriodDto.class);
         } catch (HttpClientErrorException e) {
             try {
                 JsonNode error = new ObjectMapper().readValue(e.getResponseBodyAsString(), JsonNode.class);
                 log.error(error.toString());
-                throw new IllegalArgumentException("Failed to access Hotbit");
+                throw new IllegalArgumentException(e.getMessage());
             } catch (IOException mappingExp) {
                 log.error(mappingExp.getMessage());
-                throw new IllegalArgumentException("Failed to access Hotbit");
+                throw new IllegalArgumentException(e.getMessage());
             }
         } catch (Exception exp) {
             log.error(exp.getMessage());
-            throw new IllegalArgumentException("Failed to access Hotbit");
+            throw new IllegalArgumentException(exp.getMessage());
         }
-        return hotbitPeriodDto;
     }
 
 
     @Override
     public HotbitOrderResponseDto postOrder(String side, Double amount, Double price) {
-        HotbitOrderResponseDto hotbitOrderResponseDto = null;
         int sideInt = 1;
         if (Objects.equals(side, "buy")) {
             sideInt = 2;
@@ -140,11 +133,12 @@ public class HotbitServiceImpl implements HotbitService {
                     .queryParam("market", "BSI/USDT");
             String response = restTemplate.getForObject(uriBuilder.toUriString(), String.class);
             ObjectMapper om = new ObjectMapper();
-            hotbitOrderResponseDto = om.readValue(response, HotbitOrderResponseDto.class);
+            HotbitOrderResponseDto hotbitOrderResponseDto = om.readValue(response, HotbitOrderResponseDto.class);
             if (hotbitOrderResponseDto.getError() != null) {
                 return null;
             } else {
                 hotbitRepository.save(hotbitOrderResponseDto.getResult().toEntity());
+                return hotbitOrderResponseDto;
             }
         } catch (HttpClientErrorException e) {
             try {
@@ -159,12 +153,10 @@ public class HotbitServiceImpl implements HotbitService {
             log.error(exp.getMessage());
             return null;
         }
-        return hotbitOrderResponseDto;
     }
 
     @Override
     public HotbitOrderResponseDto cancelOrder(Long orderId) {
-        HotbitOrderResponseDto hotbitOrderResponseDto = null;
         try {
             String data = "api_key=" + hotbitConfiguration.getKey() + "&market=BSI/USDT&order_id=" + orderId;
             String sign = SignatureUtil.GenerateSignatureHotbit(data, hotbitConfiguration);
@@ -175,26 +167,24 @@ public class HotbitServiceImpl implements HotbitService {
                     .queryParam("market", "BSI/USDT");
             String response = restTemplate.getForObject(uriBuilder.toUriString(), String.class);
             ObjectMapper om = new ObjectMapper();
-            hotbitOrderResponseDto = om.readValue(response, HotbitOrderResponseDto.class);
+            return om.readValue(response, HotbitOrderResponseDto.class);
         } catch (HttpClientErrorException e) {
             try {
                 JsonNode error = new ObjectMapper().readValue(e.getResponseBodyAsString(), JsonNode.class);
                 log.error(error.toString());
-                throw new IllegalArgumentException("Failed to access Hotbit");
+                throw new IllegalArgumentException(e.getMessage());
             } catch (IOException mappingExp) {
                 log.error(mappingExp.getMessage());
-                throw new IllegalArgumentException("Failed to access Hotbit");
+                throw new IllegalArgumentException(e.getMessage());
             }
         } catch (Exception exp) {
             log.error(exp.getMessage());
-            throw new IllegalArgumentException("Failed to access Hotbit");
+            throw new IllegalArgumentException(exp.getMessage());
         }
-        return hotbitOrderResponseDto;
     }
 
     @Override
     public HotbitSuccessResponseDto checkSuccessStatus(Long orderId) {
-        HotbitSuccessResponseDto hotbitSuccessResponseDto = null;
         try {
             String data = "api_key=" + hotbitConfiguration.getKey() + "&offset=0&order_id=" + orderId;
             String sign = SignatureUtil.GenerateSignatureHotbit(data, hotbitConfiguration);
@@ -205,21 +195,20 @@ public class HotbitServiceImpl implements HotbitService {
                     .queryParam("offset", "0");
             String response = restTemplate.getForObject(uriBuilder.toUriString(), String.class);
             ObjectMapper om = new ObjectMapper();
-            hotbitSuccessResponseDto = om.readValue(response, HotbitSuccessResponseDto.class);
+            return om.readValue(response, HotbitSuccessResponseDto.class);
         } catch (HttpClientErrorException e) {
             try {
                 JsonNode error = new ObjectMapper().readValue(e.getResponseBodyAsString(), JsonNode.class);
                 log.error(error.toString());
-                throw new IllegalArgumentException("Failed to access Hotbit");
+                throw new IllegalArgumentException(e.getMessage());
             } catch (IOException mappingExp) {
                 log.error(mappingExp.getMessage());
-                throw new IllegalArgumentException("Failed to access Hotbit");
+                throw new IllegalArgumentException(e.getMessage());
             }
         } catch (Exception exp) {
             log.error(exp.getMessage());
-            throw new IllegalArgumentException("Failed to access Hotbit");
+            throw new IllegalArgumentException(exp.getMessage());
         }
-        return hotbitSuccessResponseDto;
     }
 
 
