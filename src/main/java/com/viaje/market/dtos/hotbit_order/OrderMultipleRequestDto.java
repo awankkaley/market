@@ -17,6 +17,10 @@ public class OrderMultipleRequestDto {
     @NotNull(message = "Please provide a amount")
     private Double amount;
 
+    private Integer buyPercent;
+
+    private Integer profitPercent;
+
     public OrderEntity toOrderEntity(String exchangeCode, Double price, String side, Double amount) {
         return OrderEntity.builder()
                 .exchangeOrderId(null)

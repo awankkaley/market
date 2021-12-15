@@ -180,8 +180,6 @@ class MarketApplicationTests {
 
         JsonObject postBody = new JsonObject();
         postBody.addProperty("amount", 2);
-        postBody.addProperty("buyPercent", 50);
-        postBody.addProperty("profitPercent", 1);
 
         JsonNode getRes = restUtil.postWithBody(url, signature, postBody);
 
@@ -199,8 +197,6 @@ class MarketApplicationTests {
         logger.debug(signature);
         JsonObject postBody = new JsonObject();
         postBody.addProperty("amount", 2);
-        postBody.addProperty("buyPercent", 50);
-        postBody.addProperty("profitPercent", 1);
 
 
         JsonNode getRes = restUtil.postWithBody(url, signature, postBody);
