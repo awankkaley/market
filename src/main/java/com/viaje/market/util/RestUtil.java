@@ -40,22 +40,25 @@ public class RestUtil {
         return responseBody;
     }
 
-    public ResponseEntity<?> getWithToken(String url, String signature) {
+    public JsonNode postWithBody(String url, String signature, Object body) throws JsonProcessingException {
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("sign", signature);
         headers.add("x-api-key", API_KEY);
-        HttpEntity httpEntity = new HttpEntity(headers);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        Gson gson = new Gson();
+        String stringObject = gson.toJson(body);
 
+        HttpEntity httpEntity = new HttpEntity(stringObject, headers);
 
-        ResponseEntity<String> response = restTemplate.exchange(
-                url, HttpMethod.GET, httpEntity, String.class);
-
+        ResponseEntity<String> response = restTemplate.postForEntity(
+                url, httpEntity, String.class, body);
+        JsonNode myBody = objectMapper.readTree(response.getBody());
 //        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-        return response;
+        return myBody;
     }
 
-    public JsonNode postWithBody(String url, String signature, Object body) throws JsonProcessingException {
+    public JsonNode putWithBody(String url, String signature, Object body) throws JsonProcessingException {
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("sign", signature);

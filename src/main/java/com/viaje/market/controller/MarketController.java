@@ -42,7 +42,7 @@ public class MarketController {
         );
     }
 
-    @PutMapping("/api/v1/setup")
+    @PostMapping("/api/v1/setup")
     public GlobalDto<String> update(@Valid @RequestBody MarketSetupRequestDto requestDto) {
         MarketSetupEntity existing = marketSetupService.getSetup().get(0);
         marketSetupService.updateSetup(requestDto, existing.getId());

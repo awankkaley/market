@@ -21,11 +21,79 @@ import static org.assertj.core.api.Assertions.assertThat;
 class MarketApplicationTests {
 
     Logger logger = LoggerFactory.getLogger("MarketTest");
-//    String BASE_URL = "http://viajemarketapidevenv1-env.ap-southeast-1.elasticbeanstalk.com";
+    //    String BASE_URL = "http://viajemarketapidevenv1-env.ap-southeast-1.elasticbeanstalk.com";
     String BASE_URL = "http://localhost:8080";
     String SECRET = "ux1hv8k3iyqcnp4d0ddm9jn2vpgdv4ptzwkeoykep67ig87rri";
     String API_KEY = "46sfy6etc12400cg1uxn58oexi0y0uffgn587y23ncganfqig9";
     RestUtil restUtil = new RestUtil(new RestTemplateBuilder());
+
+    @Test
+    void getConfiguration() throws JsonProcessingException {
+        String url = BASE_URL + "/api/v1/setup";
+
+        String payload = "x-api-key=" + API_KEY;
+        String signature = HmacValidator.generateSignature(SECRET, payload);
+
+        JsonNode getRes = restUtil.getRequestWithToken(url, signature);
+
+        logger.info("get res::{}", getRes);
+
+        assertThat(getRes.get("error").textValue()).isEqualTo(null);
+    }
+
+    @Test
+    void updateConfiguration() throws JsonProcessingException {
+        String url = BASE_URL + "/api/v1/setup";
+
+        String payload = "x-api-key=" + API_KEY;
+        String signature = HmacValidator.generateSignature(SECRET, payload);
+
+        JsonObject postBody = new JsonObject();
+        postBody.addProperty("buyPercent", 50);
+        postBody.addProperty("profitPercent", 10);
+
+        JsonNode getRes = restUtil.postWithBody(url, signature, postBody);
+
+        logger.info("get res::{}", getRes);
+
+        assertThat(getRes.get("error").textValue()).isEqualTo(null);
+    }
+
+
+    @Test
+    void marketExchangeCoinsbit() throws JsonProcessingException {
+        String url = BASE_URL + "/api/v1/book/order/both/coinsbit";
+
+        String payload = "x-api-key=" + API_KEY + "&exchange=coinsbit";
+        String signature = HmacValidator.generateSignature(SECRET, payload);
+
+        JsonObject postBody = new JsonObject();
+        postBody.addProperty("amount", 2);
+
+        JsonNode getRes = restUtil.postWithBody(url, signature, postBody);
+
+        logger.info("get res::{}", getRes);
+
+        assertThat(getRes.get("error").textValue()).isEqualTo(null);
+    }
+
+    @Test
+    void marketExchangeHotbit() throws JsonProcessingException {
+        String url = BASE_URL + "/api/v1/book/order/both/hotbit";
+
+        String payload = "x-api-key=" + API_KEY + "&exchange=hotbit";
+        String signature = HmacValidator.generateSignature(SECRET, payload);
+        logger.debug(signature);
+        JsonObject postBody = new JsonObject();
+        postBody.addProperty("amount", 2);
+
+
+        JsonNode getRes = restUtil.postWithBody(url, signature, postBody);
+
+        logger.info("get res::{}", getRes);
+
+        assertThat(getRes.get("error").textValue()).isEqualTo(null);
+    }
 
     @Test
     void checkBalanceCoinsbit() throws JsonProcessingException {
@@ -169,41 +237,6 @@ class MarketApplicationTests {
         logger.info("get res::{}", getRes);
 
         assertThat(getRes.get("result").get("exchangeCode").textValue()).isEqualTo("hotbit");
-    }
-
-    @Test
-    void twoSideCoinsbit() throws JsonProcessingException {
-        String url = BASE_URL + "/api/v1/book/order/both/coinsbit";
-
-        String payload = "x-api-key=" + API_KEY + "&exchange=coinsbit" ;
-        String signature = HmacValidator.generateSignature(SECRET, payload);
-
-        JsonObject postBody = new JsonObject();
-        postBody.addProperty("amount", 2);
-
-        JsonNode getRes = restUtil.postWithBody(url, signature, postBody);
-
-        logger.info("get res::{}", getRes);
-
-        assertThat(getRes.get("error").textValue()).isEqualTo(null);
-    }
-
-    @Test
-    void twoSideHotbit() throws JsonProcessingException {
-        String url = BASE_URL + "/api/v1/book/order/both/hotbit";
-
-        String payload = "x-api-key=" + API_KEY + "&exchange=hotbit" ;
-        String signature = HmacValidator.generateSignature(SECRET, payload);
-        logger.debug(signature);
-        JsonObject postBody = new JsonObject();
-        postBody.addProperty("amount", 2);
-
-
-        JsonNode getRes = restUtil.postWithBody(url, signature, postBody);
-
-        logger.info("get res::{}", getRes);
-
-        assertThat(getRes.get("error").textValue()).isEqualTo(null);
     }
 
 
