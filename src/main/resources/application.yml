@@ -32,7 +32,7 @@ spring:
   jpa:
     database-platform: H2
     show-sql: true
-    defer-datasource-initialization : true
+    defer-datasource-initialization: true
     #    properties:
     #      hibernate:
     #        format_sql: true
@@ -92,6 +92,9 @@ appication:
     coinsbit:
       secret: 9c568346491018271b6eae0f8679ea3c
       key: 1913763a10acf32a9f79a642e11be223
+    digifinex:
+      secret: 2055e07338a8bc8950919ffcca7a812cace6611778
+      key: 9dd2102dedd07f
 
 logging.level.org.apache.http: DEBUG
 logging.level.httpclient.wire: DEBUG

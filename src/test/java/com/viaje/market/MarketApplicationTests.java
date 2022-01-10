@@ -3,12 +3,14 @@ package com.viaje.market;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.gson.JsonObject;
+import com.viaje.market.services.impl.DigifinexServiceImpl;
 import com.viaje.market.util.HmacValidator;
 import com.viaje.market.util.RestUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -20,12 +22,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RunWith(SpringRunner.class)
 class MarketApplicationTests {
 
+
+
     Logger logger = LoggerFactory.getLogger("MarketTest");
     //    String BASE_URL = "http://viajemarketapidevenv1-env.ap-southeast-1.elasticbeanstalk.com";
     String BASE_URL = "http://localhost:8080";
     String SECRET = "ux1hv8k3iyqcnp4d0ddm9jn2vpgdv4ptzwkeoykep67ig87rri";
     String API_KEY = "46sfy6etc12400cg1uxn58oexi0y0uffgn587y23ncganfqig9";
     RestUtil restUtil = new RestUtil(new RestTemplateBuilder());
+
 
     @Test
     void getConfiguration() throws JsonProcessingException {
@@ -317,6 +322,11 @@ class MarketApplicationTests {
         assertThat(getRes.get("error").textValue()).isEqualTo(null);
 
     }
+
+
+
+
+
 
 
 }

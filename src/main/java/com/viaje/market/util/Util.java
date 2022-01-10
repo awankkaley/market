@@ -3,6 +3,7 @@ package com.viaje.market.util;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Calendar;
 
 public class Util {
     public static Double getBuyAmountByRation(Integer buyPercent, Double amount) {
@@ -10,7 +11,7 @@ public class Util {
     }
 
     public static Double getSellAmountFromRatio(Integer buyPercent, Double amount) {
-        return ((100-buyPercent.doubleValue()) / 100) * amount;
+        return ((100 - buyPercent.doubleValue()) / 100) * amount;
     }
 
     public static Double calculatetoBsiAmount(Double price, Double usdAmount, Integer round) {
@@ -29,10 +30,12 @@ public class Util {
         return bd.doubleValue();
     }
 
-    public static Double getAmountSellFromPercentage(Integer buyPercent, Double amount) {
-        double percent = 100.0;
-        double sellPercent = percent - buyPercent.doubleValue();
-        return (sellPercent / 100) * amount;
+    public static String getCurrentTimeSecond() {
+        //creating Calendar instance
+        Calendar calendar = Calendar.getInstance();
+        //Returns current time in millis
+        long timeMilli2 = calendar.getTimeInMillis();
+        return String.valueOf(timeMilli2 / 1000);
     }
 
     public static String statusTitle(Integer status) {

@@ -1,6 +1,7 @@
 package com.viaje.market.util;
 
 import com.viaje.market.config.CoinsbitConfiguration;
+import com.viaje.market.config.DigifinexConfiguration;
 import com.viaje.market.config.HotbitConfiguration;
 import com.viaje.market.dtos.CoinsbitSignature;
 import lombok.extern.slf4j.Slf4j;
@@ -46,6 +47,18 @@ public class SignatureUtil {
             String hash = toHexString(sha256_HMAC.doFinal(payload.getBytes()));
             return new CoinsbitSignature(hash, payload, result);
 
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new IllegalArgumentException(e.getMessage());
+        }
+    }
+
+    public static String GenerateSignatureDigifinex(String params, DigifinexConfiguration digifinexConfiguration) {
+        try {
+            Mac sha256_HMAC = Mac.getInstance("HmacSHA256");
+            SecretKeySpec secret_key = new SecretKeySpec(digifinexConfiguration.getSecret().getBytes(StandardCharsets.UTF_8), "HmacSHA256");
+            sha256_HMAC.init(secret_key);
+            return toHexString(sha256_HMAC.doFinal(params.getBytes(StandardCharsets.UTF_8)));
         } catch (Exception e) {
             e.printStackTrace();
             throw new IllegalArgumentException(e.getMessage());
