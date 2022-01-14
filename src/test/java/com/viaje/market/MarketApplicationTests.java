@@ -3,14 +3,12 @@ package com.viaje.market;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.gson.JsonObject;
-import com.viaje.market.services.impl.DigifinexServiceImpl;
 import com.viaje.market.util.HmacValidator;
-import com.viaje.market.util.RestUtil;
+import com.viaje.market.util.TestRestUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -29,7 +27,7 @@ class MarketApplicationTests {
     String BASE_URL = "http://localhost:8080";
     String SECRET = "ux1hv8k3iyqcnp4d0ddm9jn2vpgdv4ptzwkeoykep67ig87rri";
     String API_KEY = "46sfy6etc12400cg1uxn58oexi0y0uffgn587y23ncganfqig9";
-    RestUtil restUtil = new RestUtil(new RestTemplateBuilder());
+    TestRestUtil testRestUtil = new TestRestUtil(new RestTemplateBuilder());
 
 
     @Test
@@ -39,7 +37,7 @@ class MarketApplicationTests {
         String payload = "x-api-key=" + API_KEY;
         String signature = HmacValidator.generateSignature(SECRET, payload);
 
-        JsonNode getRes = restUtil.getRequestWithToken(url, signature);
+        JsonNode getRes = testRestUtil.getRequestWithToken(url, signature);
 
         logger.info("get res::{}", getRes);
 
@@ -57,7 +55,7 @@ class MarketApplicationTests {
         postBody.addProperty("buyPercent", 50);
         postBody.addProperty("profitPercent", 10);
 
-        JsonNode getRes = restUtil.postWithBody(url, signature, postBody);
+        JsonNode getRes = testRestUtil.postWithBody(url, signature, postBody);
 
         logger.info("get res::{}", getRes);
 
@@ -75,7 +73,7 @@ class MarketApplicationTests {
         JsonObject postBody = new JsonObject();
         postBody.addProperty("amount", 2);
 
-        JsonNode getRes = restUtil.postWithBody(url, signature, postBody);
+        JsonNode getRes = testRestUtil.postWithBody(url, signature, postBody);
 
         logger.info("get res::{}", getRes);
 
@@ -93,7 +91,7 @@ class MarketApplicationTests {
         postBody.addProperty("amount", 2);
 
 
-        JsonNode getRes = restUtil.postWithBody(url, signature, postBody);
+        JsonNode getRes = testRestUtil.postWithBody(url, signature, postBody);
 
         logger.info("get res::{}", getRes);
 
@@ -107,7 +105,7 @@ class MarketApplicationTests {
         String payload = "x-api-key=" + API_KEY + "&exchange=coinsbit";
         String signature = HmacValidator.generateSignature(SECRET, payload);
 
-        JsonNode getRes = restUtil.getRequestWithToken(url, signature);
+        JsonNode getRes = testRestUtil.getRequestWithToken(url, signature);
 
         logger.info("get res::{}", getRes);
 
@@ -121,7 +119,7 @@ class MarketApplicationTests {
         String payload = "x-api-key=" + API_KEY + "&exchange=hotbit";
         String signature = HmacValidator.generateSignature(SECRET, payload);
 
-        JsonNode getRes = restUtil.getRequestWithToken(url, signature);
+        JsonNode getRes = testRestUtil.getRequestWithToken(url, signature);
 
         logger.info("get res::{}", getRes);
 
@@ -135,7 +133,7 @@ class MarketApplicationTests {
         String payload = "x-api-key=" + API_KEY + "&exchange=coinsbit";
         String signature = HmacValidator.generateSignature(SECRET, payload);
 
-        JsonNode getRes = restUtil.getRequestWithToken(url, signature);
+        JsonNode getRes = testRestUtil.getRequestWithToken(url, signature);
 
         logger.info("get res::{}", getRes);
 
@@ -149,7 +147,7 @@ class MarketApplicationTests {
         String payload = "x-api-key=" + API_KEY + "&exchange=hotbit";
         String signature = HmacValidator.generateSignature(SECRET, payload);
 
-        JsonNode getRes = restUtil.getRequestWithToken(url, signature);
+        JsonNode getRes = testRestUtil.getRequestWithToken(url, signature);
 
         logger.info("get res::{}", getRes);
 
@@ -164,7 +162,7 @@ class MarketApplicationTests {
         String payload = "x-api-key=" + API_KEY + "&period=" + periode;
         String signature = HmacValidator.generateSignature(SECRET, payload);
 
-        JsonNode getRes = restUtil.getRequestWithToken(url, signature);
+        JsonNode getRes = testRestUtil.getRequestWithToken(url, signature);
 
         logger.info("get res::{}", getRes);
 
@@ -183,7 +181,7 @@ class MarketApplicationTests {
         postBody.addProperty("side", "buy");
         postBody.addProperty("amount", 1.0);
 
-        JsonNode getRes = restUtil.postWithBody(url, signature, postBody);
+        JsonNode getRes = testRestUtil.postWithBody(url, signature, postBody);
 
         logger.info("get res::{}", getRes);
 
@@ -201,7 +199,7 @@ class MarketApplicationTests {
         postBody.addProperty("side", "sell");
         postBody.addProperty("amount", 1.0);
 
-        JsonNode getRes = restUtil.postWithBody(url, signature, postBody);
+        JsonNode getRes = testRestUtil.postWithBody(url, signature, postBody);
 
         logger.info("get res::{}", getRes);
 
@@ -219,7 +217,7 @@ class MarketApplicationTests {
         postBody.addProperty("side", "buy");
         postBody.addProperty("amount", 1.0);
 
-        JsonNode getRes = restUtil.postWithBody(url, signature, postBody);
+        JsonNode getRes = testRestUtil.postWithBody(url, signature, postBody);
 
         logger.info("get res::{}", getRes);
 
@@ -237,7 +235,7 @@ class MarketApplicationTests {
         postBody.addProperty("side", "sell");
         postBody.addProperty("amount", 1.0);
 
-        JsonNode getRes = restUtil.postWithBody(url, signature, postBody);
+        JsonNode getRes = testRestUtil.postWithBody(url, signature, postBody);
 
         logger.info("get res::{}", getRes);
 
@@ -252,7 +250,7 @@ class MarketApplicationTests {
         String payload = "x-api-key=" + API_KEY + "&page=0&limit=100";
         String signature = HmacValidator.generateSignature(SECRET, payload);
 
-        JsonNode getRes = restUtil.getRequestWithToken(url, signature);
+        JsonNode getRes = testRestUtil.getRequestWithToken(url, signature);
 
         logger.info("get res::{}", getRes);
 
@@ -267,7 +265,7 @@ class MarketApplicationTests {
         String payload = "x-api-key=" + API_KEY + "&page=0&limit=100&status=1";
         String signature = HmacValidator.generateSignature(SECRET, payload);
 
-        JsonNode getRes = restUtil.getRequestWithToken(url, signature);
+        JsonNode getRes = testRestUtil.getRequestWithToken(url, signature);
 
         logger.info("get res::{}", getRes);
 
@@ -282,7 +280,7 @@ class MarketApplicationTests {
         String payload = "x-api-key=" + API_KEY + "&orderId=3";
         String signature = HmacValidator.generateSignature(SECRET, payload);
 
-        JsonNode getRes = restUtil.getRequestWithToken(url, signature);
+        JsonNode getRes = testRestUtil.getRequestWithToken(url, signature);
 
         logger.info("get res::{}", getRes);
 
@@ -297,7 +295,7 @@ class MarketApplicationTests {
         String payload = "x-api-key=" + API_KEY + "&orderId=3";
         String signature = HmacValidator.generateSignature(SECRET, payload);
 
-        JsonNode getRes = restUtil.getRequestWithToken(url, signature);
+        JsonNode getRes = testRestUtil.getRequestWithToken(url, signature);
 
         logger.info("get res::{}", getRes);
 
@@ -315,7 +313,7 @@ class MarketApplicationTests {
         JsonObject postBody = new JsonObject();
         postBody.addProperty("orderId", "3");
 
-        JsonNode getRes = restUtil.postWithBody(url, signature, postBody);
+        JsonNode getRes = testRestUtil.postWithBody(url, signature, postBody);
 
         logger.info("get res::{}", getRes);
 

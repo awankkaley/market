@@ -1,6 +1,6 @@
 package com.viaje.market;
 
-import com.viaje.market.services.impl.DigifinexServiceImpl;
+import com.viaje.market.services.DigifinexServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,7 +13,7 @@ public class DigifinexTest {
     private DigifinexServiceImpl digifinexService;
 
     @Test
-    void getBalance() throws UnsupportedEncodingException {
+    void getBalance() {
         digifinexService.getBalance();
     }
 

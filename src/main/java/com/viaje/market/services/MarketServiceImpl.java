@@ -1,4 +1,4 @@
-package com.viaje.market.services.impl;
+package com.viaje.market.services;
 
 import com.viaje.market.dtos.coinsbit_market.CoinsbitMarketDto;
 import com.viaje.market.dtos.coinsbit_order.CoinsbitOrderDto;
@@ -19,7 +19,6 @@ import com.viaje.market.repositories.HotbitRepository;
 import com.viaje.market.repositories.OrderRepository;
 import com.viaje.market.config.api_key.ApiKeyConfiguration;
 import com.viaje.market.dtos.*;
-import com.viaje.market.services.*;
 import com.viaje.market.util.ConstantValue;
 import com.viaje.market.util.Util;
 import lombok.AllArgsConstructor;
@@ -38,17 +37,16 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @AllArgsConstructor
-public class MarketServiceImpl implements MarketService {
-    private final HotbitService hotbitService;
-    private final CoinsbitService coinsbitService;
+public class MarketServiceImpl {
+    private final HotbitServiceImpl hotbitService;
+    private final CoinsbitServiceImpl coinsbitService;
     private final HotbitRepository hotbitRepository;
     private final CoinbitRepository coinbitRepository;
-    private final SignatureService signatureService;
+    private final SignatureValidator signatureService;
     private final OrderRepository orderRepository;
     private final ApiKeyConfiguration apiKeyConfiguration;
-    private final MarketSetupService marketSetupService;
+    private final MarketSetupServiceImpl marketSetupService;
 
-    @Override
     public BalanceResponseDto getBalance(String exchange, String signature) {
         String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&exchange=" + exchange;
         signatureService.isValidSignature(payload, signature);
@@ -62,7 +60,6 @@ public class MarketServiceImpl implements MarketService {
         }
     }
 
-    @Override
     public MarketResponse getMarketStatusToday(String exchange, String signature) {
         String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&exchange=" + exchange;
         signatureService.isValidSignature(payload, signature);
@@ -76,7 +73,6 @@ public class MarketServiceImpl implements MarketService {
         }
     }
 
-    @Override
     public HotbitPeriodDto getMarketStatusByPeriode(String exchange, Integer periode, String signature) {
         String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&period=" + periode;
         signatureService.isValidSignature(payload, signature);
@@ -88,7 +84,6 @@ public class MarketServiceImpl implements MarketService {
     }
 
 
-    @Override
     public GlobalExchangeResponse postOrder(String exchange, OrderRequestDto orderRequestDto, String signature) {
         String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&exchange=" + exchange + "&side=" + orderRequestDto.getSide() + "&amount=" + orderRequestDto.getAmount().toString();
         signatureService.isValidSignature(payload, signature);
@@ -103,7 +98,6 @@ public class MarketServiceImpl implements MarketService {
 
     }
 
-    @Override
     public GlobaExchangeMultipleResponse postMultipleOrder(String exchange, OrderMultipleRequestDto orderRequestDto, String signature) {
         String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&exchange=" + exchange;
         signatureService.isValidSignature(payload, signature);
@@ -118,7 +112,6 @@ public class MarketServiceImpl implements MarketService {
 
     }
 
-    @Override
     public GlobalExchangeResponse cancelOrder(Long orderId, String signature) {
         String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&orderId=" + orderId;
         signatureService.isValidSignature(payload, signature);
@@ -132,7 +125,6 @@ public class MarketServiceImpl implements MarketService {
         }
     }
 
-    @Override
     public List<OrderResponseDto> getAll(Integer page, Integer limit, String signature) {
         String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&page=" + page + "&limit=" + limit;
         signatureService.isValidSignature(payload, signature);
@@ -142,7 +134,6 @@ public class MarketServiceImpl implements MarketService {
                 .collect(Collectors.toList());
     }
 
-    @Override
     public List<OrderResponseDto> getAllByStatus(Integer page, Integer limit, Integer status, String signature) {
         String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&page=" + page + "&limit=" + limit + "&status=" + status;
         signatureService.isValidSignature(payload, signature);
@@ -153,7 +144,6 @@ public class MarketServiceImpl implements MarketService {
     }
 
 
-    @Override
     public OrderResponseDto getById(Long orderId, String signature) {
         String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&orderId=" + orderId;
         signatureService.isValidSignature(payload, signature);
@@ -161,7 +151,6 @@ public class MarketServiceImpl implements MarketService {
         return result.toDtoList();
     }
 
-    @Override
     public Object getDetailOrder(Long orderId, String signature) {
         String payload = "x-api-key=" + apiKeyConfiguration.getPrincipalRequestValue() + "&orderId=" + orderId;
         signatureService.isValidSignature(payload, signature);
@@ -178,7 +167,6 @@ public class MarketServiceImpl implements MarketService {
 
 
     @Async
-    @Override
     public void checkStatusPeriodically() {
         List<OrderEntity> order = orderRepository.findByStatusAndIsValid(1, true);
         if (order.size() != 0) {
@@ -206,7 +194,6 @@ public class MarketServiceImpl implements MarketService {
     }
 
     @Async
-    @Override
     public void createPendingOrder() {
         List<OrderEntity> order = orderRepository.findByStatusAndIsValid(1, false);
         if (order.size() != 0) {
@@ -247,10 +234,10 @@ public class MarketServiceImpl implements MarketService {
         return orderRepository.save(order);
     }
 
-    private OrderEntity updateStatusFailed(OrderEntity order) {
+    private void updateStatusFailed(OrderEntity order) {
         order.setStatus(ConstantValue.FAILED);
         order.setValid(true);
-        return orderRepository.save(order);
+        orderRepository.save(order);
     }
 
     private OrderEntity updateStatusSuccessCoinsbit(OrderEntity order, CoinsbitOrderDto result) {

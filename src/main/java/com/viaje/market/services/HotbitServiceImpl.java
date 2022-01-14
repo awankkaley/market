@@ -1,4 +1,4 @@
-package com.viaje.market.services.impl;
+package com.viaje.market.services;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -9,7 +9,6 @@ import com.viaje.market.dtos.hotbit_market.HotbitTodayDto;
 import com.viaje.market.dtos.hotbit_order.HotbitOrderResponseDto;
 import com.viaje.market.dtos.hotbit_status.HotbitSuccessResponseDto;
 import com.viaje.market.repositories.HotbitRepository;
-import com.viaje.market.services.HotbitService;
 import com.viaje.market.util.SignatureUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +27,7 @@ import java.util.Objects;
 @Slf4j
 @Service
 @AllArgsConstructor
-public class HotbitServiceImpl implements HotbitService {
+public class HotbitServiceImpl {
 
     private HotbitConfiguration hotbitConfiguration;
     private HotbitRepository hotbitRepository;
@@ -37,7 +36,6 @@ public class HotbitServiceImpl implements HotbitService {
     @Autowired
     private RestTemplate restTemplate;
 
-    @Override
     public HotbitBalanceDto getBalance() {
         try {
             String data = "api_key=" + hotbitConfiguration.getKey() + "&assets=[]";
@@ -62,7 +60,6 @@ public class HotbitServiceImpl implements HotbitService {
         }
     }
 
-    @Override
     public HotbitTodayDto getMarketStatusToday() {
         try {
             HttpHeaders headers = new HttpHeaders();
@@ -87,7 +84,6 @@ public class HotbitServiceImpl implements HotbitService {
         }
     }
 
-    @Override
     public HotbitPeriodDto getMarketStatusByPeriode(Integer periode) {
         try {
             HttpHeaders headers = new HttpHeaders();
@@ -114,7 +110,6 @@ public class HotbitServiceImpl implements HotbitService {
     }
 
 
-    @Override
     public HotbitOrderResponseDto postOrder(String side, Double amount, Double price) {
         int sideInt = 1;
         if (Objects.equals(side, "buy")) {
@@ -155,7 +150,6 @@ public class HotbitServiceImpl implements HotbitService {
         }
     }
 
-    @Override
     public HotbitOrderResponseDto cancelOrder(Long orderId) {
         try {
             String data = "api_key=" + hotbitConfiguration.getKey() + "&market=BSI/USDT&order_id=" + orderId;
@@ -183,7 +177,6 @@ public class HotbitServiceImpl implements HotbitService {
         }
     }
 
-    @Override
     public HotbitSuccessResponseDto checkSuccessStatus(Long orderId) {
         try {
             String data = "api_key=" + hotbitConfiguration.getKey() + "&offset=0&order_id=" + orderId;

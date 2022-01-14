@@ -1,78 +1,59 @@
 package com.viaje.market.util;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
+import com.viaje.market.config.CoinsbitConfiguration;
+import com.viaje.market.config.DigifinexConfiguration;
+import com.viaje.market.dtos.CoinsbitSignature;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import net.minidev.json.JSONObject;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Collections;
+import java.util.Map;
+
 @Slf4j
 @Component
 public class RestUtil {
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
     private final RestTemplate restTemplate;
-    String API_KEY = "46sfy6etc12400cg1uxn58oexi0y0uffgn587y23ncganfqig9";
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final CoinsbitConfiguration coinsbitConfiguration;
+    private final DigifinexConfiguration digifinexConfiguration;
 
-    public RestUtil(RestTemplateBuilder restTemplateBuilder) {
+
+    public RestUtil(RestTemplateBuilder restTemplateBuilder, CoinsbitConfiguration coinsbitConfiguration, DigifinexConfiguration digifinexConfiguration) {
         this.restTemplate = restTemplateBuilder.build();
+        this.coinsbitConfiguration = coinsbitConfiguration;
+        this.digifinexConfiguration = digifinexConfiguration;
     }
 
-    public JsonNode getRequestWithToken(String url, String signature) throws JsonProcessingException {
-
+    public ResponseEntity<String> postDataCoinsbit(String url, JSONObject json) {
+        CoinsbitSignature coinsbitSignature = SignatureUtil.GenerateSignatureCoinsbit(json.toJSONString(), coinsbitConfiguration);
         HttpHeaders headers = new HttpHeaders();
-        headers.add("sign", signature);
-        headers.add("x-api-key", API_KEY);
-        HttpEntity httpEntity = new HttpEntity(headers);
-
-        ResponseEntity<String> response = restTemplate.exchange(
-                url, HttpMethod.GET, httpEntity, String.class);
-        JsonNode responseBody = objectMapper.readTree(response.getBody());
-
-//        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-        return responseBody;
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        headers.set("X-TXC-APIKEY", coinsbitConfiguration.getKey());
+        headers.set("X-TXC-PAYLOAD", coinsbitSignature.getPayload());
+        headers.set("X-TXC-SIGNATURE", coinsbitSignature.getSignature());
+        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(json, headers);
+        return restTemplate.postForEntity(url, entity, String.class);
     }
 
-    public JsonNode postWithBody(String url, String signature, Object body) throws JsonProcessingException {
 
+    public ResponseEntity<String> postDataDigifinex(String url, String data, HttpMethod httpMethod) {
+        String sign = SignatureUtil.GenerateSignatureDigifinex(data, digifinexConfiguration);
         HttpHeaders headers = new HttpHeaders();
-        headers.add("sign", signature);
-        headers.add("x-api-key", API_KEY);
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        Gson gson = new Gson();
-        String stringObject = gson.toJson(body);
+        headers.set("ACCESS-KEY", digifinexConfiguration.getKey());
+        headers.set("ACCESS-TIMESTAMP", Util.getCurrentTimeSecond());
+        headers.set("ACCESS-SIGN", sign);
 
-        HttpEntity httpEntity = new HttpEntity(stringObject, headers);
+        HttpEntity request = new HttpEntity(headers);
 
-        ResponseEntity<String> response = restTemplate.postForEntity(
-                url, httpEntity, String.class, body);
-        JsonNode myBody = objectMapper.readTree(response.getBody());
-//        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-        return myBody;
-    }
-
-    public JsonNode putWithBody(String url, String signature, Object body) throws JsonProcessingException {
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("sign", signature);
-        headers.add("x-api-key", API_KEY);
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        Gson gson = new Gson();
-        String stringObject = gson.toJson(body);
-
-        HttpEntity httpEntity = new HttpEntity(stringObject, headers);
-
-        ResponseEntity<String> response = restTemplate.postForEntity(
-                url, httpEntity, String.class, body);
-        JsonNode myBody = objectMapper.readTree(response.getBody());
-//        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-        return myBody;
+        return  restTemplate.exchange(
+                url,
+                httpMethod,
+                request,
+                String.class,
+                1
+        );
     }
 }
