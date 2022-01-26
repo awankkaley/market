@@ -93,8 +93,8 @@ appication:
       secret: 9c568346491018271b6eae0f8679ea3c
       key: 1913763a10acf32a9f79a642e11be223
     digifinex:
-      secret: 2055e07338a8bc8950919ffcca7a812cace6611778
-      key: 9dd2102dedd07f
+      secret: 042c5d326282cedf1a07edca71f4982a682cb017b7
+      key: f9e4c2c78e1ec6
 
 logging.level.org.apache.http: DEBUG
 logging.level.httpclient.wire: DEBUG

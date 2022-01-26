@@ -40,6 +40,7 @@ import java.util.stream.Collectors;
 public class MarketServiceImpl {
     private final HotbitServiceImpl hotbitService;
     private final CoinsbitServiceImpl coinsbitService;
+    private final DigifinexServiceImpl digifinexService;
     private final HotbitRepository hotbitRepository;
     private final CoinbitRepository coinbitRepository;
     private final SignatureValidator signatureService;
@@ -55,6 +56,9 @@ public class MarketServiceImpl {
         }
         if (Objects.equals(exchange, ConstantValue.EXCHANGE_COINSBIT)) {
             return coinsbitService.getBalance().toResponse();
+        }
+        if (Objects.equals(exchange, ConstantValue.EXCHANGE_DIGIFINEX)) {
+            return digifinexService.getBalance().toResponse();
         } else {
             throw new IllegalArgumentException("Exchange Not Found");
         }
@@ -68,7 +72,10 @@ public class MarketServiceImpl {
         }
         if (Objects.equals(exchange, ConstantValue.EXCHANGE_COINSBIT)) {
             return coinsbitService.getMarketStatusToday().toResponse();
-        } else {
+        }
+        if (Objects.equals(exchange, ConstantValue.EXCHANGE_DIGIFINEX)) {
+            return digifinexService.getMarketStatus().toResponse();
+        }else {
             throw new IllegalArgumentException("Exchange Not Found");
         }
     }

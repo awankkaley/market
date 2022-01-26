@@ -14,6 +14,8 @@ public class ConstantValue {
 
     public static final String EXCHANGE_HOTBIT = "hotbit";
     public static final String EXCHANGE_COINSBIT = "coinsbit";
+    public static final String EXCHANGE_DIGIFINEX = "digifinex";
+
 
 
 

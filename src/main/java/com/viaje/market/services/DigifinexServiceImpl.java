@@ -2,6 +2,9 @@ package com.viaje.market.services;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.viaje.market.dtos.coinsbit_balance.CoinsbitBalanceDto;
+import com.viaje.market.dtos.digifinex.DigifinexBalanceResponse;
+import com.viaje.market.dtos.digifinex.DigifinexMarketResponse;
 import com.viaje.market.util.RestUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,11 +22,12 @@ public class DigifinexServiceImpl {
 
     private RestUtil restUtil;
 
-    public void getBalance() {
+    public DigifinexBalanceResponse getBalance() {
         String url = "https://openapi.digifinex.com/v3/spot/assets";
         try {
             ResponseEntity<String> response = restUtil.postDataDigifinex(url, "", HttpMethod.GET);
-            log.error(response.getBody());
+            ObjectMapper om = new ObjectMapper();
+            return om.readValue(response.getBody(), DigifinexBalanceResponse.class);
         } catch (HttpClientErrorException e) {
             try {
                 JsonNode error = new ObjectMapper().readValue(e.getResponseBodyAsString(), JsonNode.class);
@@ -39,12 +43,13 @@ public class DigifinexServiceImpl {
         }
     }
 
-    public void getMarketStatus() {
-        String data = "symbol=btc_usdt";
+    public DigifinexMarketResponse getMarketStatus() {
+        String data = "symbol=bsi_usdt";
         String url = "https://openapi.digifinex.com/v3/ticker?" + data;
         try {
             ResponseEntity<String> response = restUtil.postDataDigifinex(url, data, HttpMethod.GET);
-            log.error(response.getBody());
+            ObjectMapper om = new ObjectMapper();
+            return om.readValue(response.getBody(), DigifinexMarketResponse.class);
         } catch (HttpClientErrorException e) {
             try {
                 JsonNode error = new ObjectMapper().readValue(e.getResponseBodyAsString(), JsonNode.class);
@@ -61,7 +66,7 @@ public class DigifinexServiceImpl {
     }
 
     public void postOrder(String type, Double amount, Double price) {
-        String data = "symbol=btc_usdt&type=" + type + "&amount=" + amount + "&price=" + price;
+        String data = "symbol=bsi_usdt&type=" + type + "&amount=" + amount + "&price=" + price;
         String url = "https://openapi.digifinex.com/v3/spot/order/new?" + data;
         try {
             ResponseEntity<String> response = restUtil.postDataDigifinex(url, data, HttpMethod.POST);

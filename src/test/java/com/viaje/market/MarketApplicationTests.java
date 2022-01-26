@@ -98,6 +98,8 @@ class MarketApplicationTests {
         assertThat(getRes.get("error").textValue()).isEqualTo(null);
     }
 
+
+
     @Test
     void checkBalanceCoinsbit() throws JsonProcessingException {
         String url = BASE_URL + "/api/v1/balance/coinsbit";
@@ -127,6 +129,20 @@ class MarketApplicationTests {
     }
 
     @Test
+    void checkBalanceDigifinex() throws JsonProcessingException {
+        String url = BASE_URL + "/api/v1/balance/digifinex";
+
+        String payload = "x-api-key=" + API_KEY + "&exchange=digifinex";
+        String signature = HmacValidator.generateSignature(SECRET, payload);
+
+        JsonNode getRes = testRestUtil.getRequestWithToken(url, signature);
+
+        logger.info("get res::{}", getRes);
+
+        assertThat(getRes.get("result").get("exchange").textValue()).isEqualTo("Digifinex");
+    }
+
+    @Test
     void marketTodayCoinsbit() throws JsonProcessingException {
         String url = BASE_URL + "/api/v1/market/today/coinsbit";
 
@@ -153,6 +169,22 @@ class MarketApplicationTests {
 
         assertThat(getRes.get("result").get("exchange").textValue()).isEqualTo("Hotbit");
     }
+
+
+    @Test
+    void marketTodayDigifinex() throws JsonProcessingException {
+        String url = BASE_URL + "/api/v1/market/today/digifinex";
+
+        String payload = "x-api-key=" + API_KEY + "&exchange=digifinex";
+        String signature = HmacValidator.generateSignature(SECRET, payload);
+
+        JsonNode getRes = testRestUtil.getRequestWithToken(url, signature);
+
+        logger.info("get res::{}", getRes);
+
+        assertThat(getRes.get("result").get("exchange").textValue()).isEqualTo("Digifinex");
+    }
+
 
     @Test
     void marketTodayByPeriodHotbit() throws JsonProcessingException {
