@@ -208,6 +208,16 @@ public class MarketServiceImpl {
                         }
                     }
                 }
+                if (Objects.equals(orderEntity.getExchangeCode(), ConstantValue.EXCHANGE_DIGIFINEX)) {
+                    DigifinexStatusResponse digifinexStatusResponse = digifinexService.getStatus(orderEntity.getExchangeOrderId());
+                    if (digifinexStatusResponse.getCode() == 0) {
+                        log.error("STATUS PERIODIC : " + digifinexStatusResponse.getData().get(0));
+                        if (digifinexStatusResponse.getData().get(0).getStatus() == 2 || digifinexStatusResponse.getData().get(0).getStatus() == 1) {
+                            orderEntity.setStatus(ConstantValue.SUCCESS);
+                            orderRepository.save(orderEntity);
+                        }
+                    }
+                }
             }
         }
     }
@@ -236,6 +246,17 @@ public class MarketServiceImpl {
                         orderEntity.setExchangeOrderId(String.valueOf(result.getResult().getOrderId()));
                         orderEntity.setAmount(Double.valueOf(result.getResult().getAmount()));
                         orderEntity.setPrice(Double.valueOf(result.getResult().getPrice()));
+                        orderRepository.save(orderEntity);
+                    }
+                }
+                if (Objects.equals(orderEntity.getExchangeCode(), ConstantValue.EXCHANGE_DIGIFINEX)) {
+                    DigifinexStatusResponse result = digifinexService.postOrder(orderEntity.getSide(), orderEntity.getAmount(), orderEntity.getCurrentPrice());
+                    if (result.getCode() == 0 && !result.getData().isEmpty()) {
+                        orderEntity.setStatus(ConstantValue.CREATED);
+                        orderEntity.setValid(true);
+                        orderEntity.setExchangeOrderId(String.valueOf(result.getData().get(0).getOrder_id()));
+                        orderEntity.setAmount(result.getData().get(0).getAmount());
+                        orderEntity.setPrice(result.getData().get(0).getPrice());
                         orderRepository.save(orderEntity);
                     }
                 }
