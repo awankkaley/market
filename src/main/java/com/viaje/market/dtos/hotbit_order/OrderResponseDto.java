@@ -11,7 +11,7 @@ public class OrderResponseDto {
 
     private Long id;
 
-    private Long exchangeOrderId;
+    private String exchangeOrderId;
 
     private String exchangeCode;
 

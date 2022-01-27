@@ -21,7 +21,7 @@ public class OrderEntity extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long exchangeOrderId;
+    private String exchangeOrderId;
 
     private String exchangeCode;
 

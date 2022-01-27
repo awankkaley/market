@@ -98,6 +98,23 @@ class MarketApplicationTests {
         assertThat(getRes.get("error").textValue()).isEqualTo(null);
     }
 
+    @Test
+    void marketExchangeDigifinex() throws JsonProcessingException {
+        String url = BASE_URL + "/api/v1/book/order/both/digifinex";
+
+        String payload = "x-api-key=" + API_KEY + "&exchange=digifinex";
+        String signature = HmacValidator.generateSignature(SECRET, payload);
+        logger.debug(signature);
+        JsonObject postBody = new JsonObject();
+        postBody.addProperty("amount", 7);
+
+
+        JsonNode getRes = testRestUtil.postWithBody(url, signature, postBody);
+
+        logger.info("get res::{}", getRes);
+
+        assertThat(getRes.get("error").textValue()).isEqualTo(null);
+    }
 
 
     @Test
@@ -274,6 +291,42 @@ class MarketApplicationTests {
         assertThat(getRes.get("result").get("exchangeCode").textValue()).isEqualTo("hotbit");
     }
 
+    @Test
+    void buyDigifinex() throws JsonProcessingException {
+        String url = BASE_URL + "/api/v1/book/order/single/digifinex";
+
+        String payload = "x-api-key=" + API_KEY + "&exchange=digifinex" + "&side=buy" + "&amount=1.0";
+        String signature = HmacValidator.generateSignature(SECRET, payload);
+
+        JsonObject postBody = new JsonObject();
+        postBody.addProperty("side", "buy");
+        postBody.addProperty("amount", 1.0);
+
+        JsonNode getRes = testRestUtil.postWithBody(url, signature, postBody);
+
+        logger.info("get res::{}", getRes);
+
+        assertThat(getRes.get("result").get("exchangeCode").textValue()).isEqualTo("digifinex");
+    }
+
+    @Test
+    void sellDigifinex() throws JsonProcessingException {
+        String url = BASE_URL + "/api/v1/book/order/single/digifinex";
+
+        String payload = "x-api-key=" + API_KEY + "&exchange=digifinex" + "&side=sell" + "&amount=1.0";
+        String signature = HmacValidator.generateSignature(SECRET, payload);
+
+        JsonObject postBody = new JsonObject();
+        postBody.addProperty("side", "sell");
+        postBody.addProperty("amount", 1.0);
+
+        JsonNode getRes = testRestUtil.postWithBody(url, signature, postBody);
+
+        logger.info("get res::{}", getRes);
+
+        assertThat(getRes.get("result").get("exchangeCode").textValue()).isEqualTo("digifinex");
+    }
+
 
     @Test
     void getAllOrder() throws JsonProcessingException {
@@ -339,11 +392,11 @@ class MarketApplicationTests {
     void cancelOrder() throws JsonProcessingException {
         String url = BASE_URL + "/api/v1/book/cancel";
 
-        String payload = "x-api-key=" + API_KEY + "&orderId=3";
+        String payload = "x-api-key=" + API_KEY + "&orderId=1";
         String signature = HmacValidator.generateSignature(SECRET, payload);
 
         JsonObject postBody = new JsonObject();
-        postBody.addProperty("orderId", "3");
+        postBody.addProperty("orderId", "1");
 
         JsonNode getRes = testRestUtil.postWithBody(url, signature, postBody);
 

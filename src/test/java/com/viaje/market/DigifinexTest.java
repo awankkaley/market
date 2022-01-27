@@ -30,13 +30,17 @@ public class DigifinexTest {
 
     @Test
     void cancelOrder() {
-        digifinexService.cancelOrder("4d95bc018cf02ab3a1dfc8ff94c1c160");
+        digifinexService.cancelOrder("577340b7d79c41d98a228d18e17c5323");
     }
 
     @Test
     void getStatus() {
-        digifinexService.getStatus("4d95bc018cf02ab3a1dfc8ff94c1c160");
+        digifinexService.getStatus("4d95bsc018cf02ab3a1dfc8ff94c1c160");
     }
 
+    @Test
+    void currentActive() {
+        digifinexService.currentActiveOrder();
+    }
 
 }
